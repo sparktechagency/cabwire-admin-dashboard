@@ -15,6 +15,7 @@ export default function ForgotPassword() {
     //   console.error("OTP verification failed:", error);
     //   alert("Email does not exist.");
     // }
+     route("/auth/login/check_email");
   };
 
   return (

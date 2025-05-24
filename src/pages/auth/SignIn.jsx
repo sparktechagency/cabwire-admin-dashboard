@@ -25,6 +25,12 @@ export default function LoginPage() {
     //     message.error("Server error Please try Another time")
     //   }
     // }
+
+    if(values?.email  === "hello@gmail.com" && values?.password === "hello123"){
+      route("/");
+    }else{
+      message.error("user not found")
+    }
   };
 
   return (
