@@ -1,5 +1,6 @@
 import { baseApi } from "../../apiBaseQuery";
 
+
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     // Login
@@ -32,7 +33,7 @@ export const authApi = baseApi.injectEndpoints({
     // Reset Password
     resetPassword: builder.mutation({
       query: (data) => ({
-        url: "/auth/dashboard/reset-password",
+        url: "/auth/reset-password",
         method: "POST",
         headers: {
           Authorization: `Bearer ${data.token}`,

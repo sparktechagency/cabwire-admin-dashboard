@@ -13,23 +13,16 @@ export default function LoginPage() {
   };
 
   const onFinish = async (values) => {
-    // try {
-    //   const response = await Login(values).unwrap();
-    //   saveToken(response?.data?.token);
-    //   localStorage.setItem("adminLoginId", response?.data?.user?._id);
-    //   route("/");
-    // } catch (error) {
-    //   if(error?.data){
-    //     message.error(error?.data?.message);
-    //   }else{
-    //     message.error("Server error Please try Another time")
-    //   }
-    // }
-
-    if(values?.email  === "hello@gmail.com" && values?.password === "hello123"){
+    try {
+      const response = await Login(values).unwrap();
+      localStorage.setItem("adminToken",response?.data?.token);
       route("/");
-    }else{
-      message.error("user not found")
+    } catch (error) {
+      if(error?.data){
+        message.error(error?.data?.message);
+      }else{
+        message.error("Server error Please try Another time")
+      }
     }
   };
 

@@ -1,5 +1,5 @@
 import { BellOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Input, Spin, Tag } from "antd";
+import { Avatar, Badge, Button, Card, Input, Tag } from "antd";
 import { motion } from "framer-motion";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
@@ -84,8 +84,8 @@ const NotificationPopup = () => {
         navigate("/earning");
       }
     } else {
-      if (path.pathname === "/business-management") {
-        navigate(`/business-management?search=${searchQuery}`);
+      if (path.pathname === "/user-management") {
+        navigate(`/user-management?search=${searchQuery}`);
       } else if (path.pathname === "/earning") {
         navigate(`/earning?search=${searchQuery}`);
       }
@@ -206,7 +206,7 @@ const NotificationPopup = () => {
               }
             >
               <div className="overflow-y-auto cursor-pointer max-h-96 custom-scrollbar">
-                { getNotification.length === 0 ? (
+                {getNotification.length === 0 ? (
                   <div className="text-center  text-gray-500">
                     <div className="flex justify-center">
                       <img

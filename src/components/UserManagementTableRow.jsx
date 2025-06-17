@@ -1,11 +1,13 @@
 import { CloseOutlined, EyeOutlined } from "@ant-design/icons";
-import { Avatar, Button, Modal, Switch } from "antd";
+import { Avatar, Button, Modal, Switch, message } from "antd";
 import { useState } from "react";
+import { useUserBlockMutation } from "../features/dashboard/UserApi";
 
-const UsermanagementTableRow = ({ item, list }) => {
+const UserManagementTableRow = ({ item, list }) => {
   const [switchModalVisible, setSwitchModalVisible] = useState(false);
   const [userDetailsModalVisible, setUserDetailsModalVisible] = useState(false);
   const [switchStatus, setSwitchStatus] = useState(item.status === "Active");
+  const [userBlock] = useUserBlockMutation();
 
   const handleViewDetails = () => {
     setUserDetailsModalVisible(true);
@@ -15,10 +17,25 @@ const UsermanagementTableRow = ({ item, list }) => {
     setSwitchModalVisible(true);
   };
 
-  const handleConfirmSwitch = () => {
-    // Implement switch logic here
-    setSwitchStatus(!switchStatus);
-    setSwitchModalVisible(false);
+  const handleConfirmSwitch = async () => {
+    try {
+      const newStatus = switchStatus ? "block" : "active";
+      const response = await userBlock({
+        id: item.id,
+        data: { status: newStatus }
+      });
+
+      if (response.error) {
+        throw new Error(response.error.message || "Failed to update status");
+      }
+
+      setSwitchStatus(!switchStatus);
+      message.success(`User ${newStatus === "block" ? "blocked" : "activated"} successfully`);
+    } catch (error) {
+      message.error(error.message || "Failed to update status");
+    } finally {
+      setSwitchModalVisible(false);
+    }
   };
 
   return (
@@ -31,11 +48,11 @@ const UsermanagementTableRow = ({ item, list }) => {
         <div className="px-4 py-3 text-center">{item.phone}</div>
         <div className="px-4 py-3 text-center">{item?.join}</div>
         <div className="py-3 text-center">{item?.boking}</div>
-        <div className="py-3 text-center">{item?.status}</div>
+        <div className="py-3 text-center">{switchStatus ? "Active" : "Blocked"}</div>
         <div className="flex items-center justify-between gap-2 border rounded border-primary px-5 ml-6 mr-6">
           <Button
             type="text"
-            icon={<EyeOutlined style={{ fontSize: '18px' }}/>}
+            icon={<EyeOutlined style={{ fontSize: '18px' }} />}
             className="text-primary hover:text-primary w-32"
             onClick={handleViewDetails}
           />
@@ -58,7 +75,11 @@ const UsermanagementTableRow = ({ item, list }) => {
         centered
       >
         <div className="text-center py-4">
-          <p className="text-lg font-medium mb-6">Do you want to Block This Account?</p>
+          <p className="text-lg font-medium mb-6">
+            {switchStatus
+              ? "Do you want to block this account?"
+              : "Do you want to activate this account?"}
+          </p>
           <div className="flex justify-center gap-4">
             <Button
               onClick={() => setSwitchModalVisible(false)}
@@ -111,7 +132,6 @@ const UsermanagementTableRow = ({ item, list }) => {
           </div>
 
           {/* User Avatar */}
-
           <div className="border border-primary p-6 rounded-lg">
             <div className="flex justify-center mb-6">
               <Avatar
@@ -149,12 +169,10 @@ const UsermanagementTableRow = ({ item, list }) => {
               </div>
             </div>
           </div>
-
-
         </div>
       </Modal>
     </>
   );
 };
 
-export default UsermanagementTableRow;
+export default UserManagementTableRow;

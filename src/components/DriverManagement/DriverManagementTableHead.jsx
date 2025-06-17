@@ -1,51 +1,6 @@
-import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useGetAllDriverQuery } from "../../features/dashboard/driverApi";
 import DriverManagementTableBody from "./DriverManagementTableBody";
-
-
-const userdata = [
-  {
-    id: 1,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  {
-    id: 2,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  {
-    id: 3,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  {
-    id: 4,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  
-]
 
 const DriverManagementTableHead = ({ columns }) => {
   const location = useLocation();
@@ -53,6 +8,12 @@ const DriverManagementTableHead = ({ columns }) => {
   const queryParams = new URLSearchParams(location.search);
   const pageParam = parseInt(queryParams.get("page")) || 1;
 
+  const { data, isLoading, refetch } = useGetAllDriverQuery(pageParam);
+
+  const handlePageChange = (page) => {
+    queryParams.set("page", page);
+    navigate({ search: queryParams.toString() });
+  };
 
   return (
     <main className="overflow-x-auto">
@@ -68,16 +29,34 @@ const DriverManagementTableHead = ({ columns }) => {
 
         {/* Body section */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
-
-          {
-            userdata?.map((item, i) => (
-              <DriverManagementTableBody item={item} key={i} list={i + 1} />
+          {isLoading ? (
+            <div className="py-4 text-center">Loading...</div>
+          ) : (
+            data?.data?.map((item, i) => (
+              <DriverManagementTableBody item={item} refetch={refetch} key={item._id} list={i + 1} />
             ))
-          }
-
+          )}
         </div>
 
-
+        {/* Pagination */}
+        {data?.meta?.totalPage > 1 && (
+          <div className="flex justify-center mt-4">
+            <div className="flex gap-2">
+              {Array.from({ length: data.meta.totalPage }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-3 py-1 rounded ${page === pageParam
+                    ? "bg-primary text-white"
+                    : "bg-gray-200 hover:bg-gray-300"
+                    }`}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );
