@@ -25,7 +25,7 @@ const DriverManagementTableBody = ({ item, list, refetch }) => {
         id: item._id,
         data: { status: newStatus }
       }).unwrap();
-      refetch();
+      refetch();   
 
       setSwitchStatus(!switchStatus);
       message.success(`Driver ${newStatus === "active" ? "activated" : "blocked"} successfully`);

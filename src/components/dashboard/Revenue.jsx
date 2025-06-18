@@ -1,25 +1,16 @@
 import { Card, Typography } from 'antd';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { useTotalRevinueQuery } from '../../features/dashboard/dashboardApi';
 const { Title } = Typography;
 
-
-const revenueData = [
-  { month: 'Jan', revenue: 12000 },
-  { month: 'Feb', revenue: 15000 },
-  { month: 'Mar', revenue: 18000 },
-  { month: 'Apr', revenue: 22000 },
-  { month: 'May', revenue: 28000 },
-  { month: 'Jun', revenue: 38750 },
-  { month: 'Jul', revenue: 35000 },
-  { month: 'Aug', revenue: 30000 },
-  { month: 'Sep', revenue: 25000 },
-  { month: 'Oct', revenue: 22000 },
-  { month: 'Nov', revenue: 20000 },
-  { month: 'Dec', revenue: 22000 }
-];
-
-
 const Revenue = () => {
+  const { data, isLoading } = useTotalRevinueQuery();
+
+  // Transform the API data to match the expected format
+  const revenueData = data?.data?.map(item => ({
+    month: item.month,
+    revenue: item.amount
+  })) || [];
 
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
@@ -31,7 +22,6 @@ const Revenue = () => {
           borderRadius: '4px',
           boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
         }}>
-          {/* <p style={{ fontWeight: 'bold', marginBottom: '5px' }}>{label}</p> */}
           <p style={{ color: '#336C79' }}>
             <strong>${payload[0].value.toLocaleString()}</strong>
           </p>
@@ -41,6 +31,9 @@ const Revenue = () => {
     return null;
   };
 
+  if (isLoading) {
+    return <div>Loading revenue data...</div>;
+  }
 
   return (
     <div className='w-full'>

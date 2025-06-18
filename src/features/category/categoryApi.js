@@ -15,11 +15,21 @@ export const categoryApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [],
     }),
+
+    editCategory: builder.mutation({
+      query: (data) => ({
+        url: `/category/${data.id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: [],
+    }),
+
   }),
 });
 
 export const {
   useGetCategoryQuery,
   useCreateCategoryMutation,
-
+  useEditCategoryMutation
 } = categoryApi;

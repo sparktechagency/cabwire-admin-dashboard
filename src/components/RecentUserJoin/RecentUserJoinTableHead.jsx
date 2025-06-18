@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { useGetAllRecentUserQuery } from "../../features/dashboard/UserApi";
 import RecentUserJoinTableBody from "./RecentUserJoinTableBody";
 
 const RecentUserJoinTableHead = ({ columns }) => {
@@ -8,44 +8,22 @@ const RecentUserJoinTableHead = ({ columns }) => {
   const queryParams = new URLSearchParams(location.search);
   const searchValue = queryParams.get("search") || "";
 
+  const { data: RecentUser, isLoading } = useGetAllRecentUserQuery();
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-
-
-  const data = [
-    {
-      id: 1,
-      userName: "John joe",
-      email: "example@email.com",
-      phoneNumber: "12345-678901",
-      joiningDate: "01-02-2025",
-      booking: "No",
-      status: "active",
-    },
-    {
-      id: 2,
-      userName: "John joe",
-      email: "example@email.com",
-      phoneNumber: "12345-678901",
-      joiningDate: "01-02-2025",
-      booking: "No",
-      status: "active",
-    },
-    {
-      id: 3,
-      userName: "John joe",
-      email: "example@email.com",
-      phoneNumber: "12345-678901",
-      joiningDate: "01-02-2025",
-      booking: "No",
-      status: "active",
-    },
-  ]
-
-
-
-
-
+  // Transform API data to match the expected format
+  const transformedData = RecentUser?.data?.map(user => ({
+    id: user._id,
+    userName: user.name,
+    email: user.email,
+    phoneNumber: user.phoneNumber || "N/A", // Add fallback if phoneNumber doesn't exist
+    joiningDate: new Date(user.createdAt).toLocaleDateString('en-GB'), // Format date as DD-MM-YYYY
+    booking: "No", // Assuming this needs to come from another API endpoint
+    status: user.status,
+  })) || [];
 
   return (
     <div className="overflow-x-auto">
@@ -59,14 +37,14 @@ const RecentUserJoinTableHead = ({ columns }) => {
 
         {/* Table Body */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
-          {
-            data.map((item, i) => (
-              <RecentUserJoinTableBody item={item} key={i} />
+          {transformedData.length > 0 ? (
+            transformedData.map((item, i) => (
+              <RecentUserJoinTableBody item={item} key={i} list={i + 1} />
             ))
-          }
+          ) : (
+            <div className="py-4 text-center">No recent users found</div>
+          )}
         </div>
-
-
       </div>
     </div>
   );
