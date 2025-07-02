@@ -2,7 +2,8 @@ import { Button, message } from "antd";
 import JoditEditor from "jodit-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetTermsQuery, useTermsAndConditionsMutation, } from '../features/Rule/RuleApi';
+import { useGetTermsQuery, useTermsAndConditionMutation } from '../features/Rule/RuleApi';
+
 
 const TermsConditions = () => {
   const router = useNavigate();
@@ -11,7 +12,7 @@ const TermsConditions = () => {
   const [isContentLoaded, setIsContentLoaded] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [updateSettings, { isLoading: updateLoading }] = useTermsAndConditionsMutation();
+  const [updateSettings, { isLoading: updateLoading }] = useTermsAndConditionMutation();
   const { data, isLoading: termsLoading } = useGetTermsQuery();
 
   useEffect(() => {

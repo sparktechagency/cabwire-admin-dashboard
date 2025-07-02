@@ -2,7 +2,8 @@ import { Button, message } from "antd";
 import JoditEditor from "jodit-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGetPrivacyQuery, usePrivacyPolicyMutation } from '../features/Rule/RuleApi';
+import { useGetPrivacyQuery, usePrivecyPolicyMutation } from '../features/Rule/RuleApi';
+
 
 const PrivacyPolicy = ({ placeholder }) => {
   const router = useNavigate();
@@ -10,7 +11,7 @@ const PrivacyPolicy = ({ placeholder }) => {
   const [content, setContent] = useState("");
   const [isContentLoaded, setIsContentLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [updateSettings, { isLoading: updateLoading }] = usePrivacyPolicyMutation();
+  const [updateSettings, { isLoading: updateLoading }] = usePrivecyPolicyMutation();
   const { data, isLoading: privacyLoading } = useGetPrivacyQuery();
 
   useEffect(() => {
