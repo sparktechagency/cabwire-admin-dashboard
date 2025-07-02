@@ -1,21 +1,21 @@
-import { baseApi } from "../../apiBaseQuery";
+import { baseApi } from '../../apiBaseQuery';
 
-export const userApi = baseApi.injectEndpoints({
+
+export const ruleApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
-    privacyPolicy: builder.mutation({
+    privecyPolicy: builder.mutation({
       query: (data) => ({
-        url: `/rule/privacy-policy`,
+        url: "/rule/privacy-policy",
         method: "POST",
-        body: data
+        body: data,
       }),
     }),
 
-    termsAndConditions: builder.mutation({
+    termsAndCondition: builder.mutation({
       query: (data) => ({
-        url: `/rule/terms-and-conditions`,
+        url: "/rule/terms-and-conditions",
         method: "POST",
-        body: data
+        body: data,
       }),
     }),
 
@@ -29,15 +29,7 @@ export const userApi = baseApi.injectEndpoints({
       providesTags: [],
     }),
 
-
-    
-
   }),
 });
 
-export const {
-  usePrivacyPolicyMutation,
-  useTermsAndConditionsMutation,
-  useGetPrivacyQuery,
-  useGetTermsQuery
-} = userApi;
+export const { usePrivecyPolicyMutation, useTermsAndConditionMutation , useGetPrivacyQuery, useGetTermsQuery} = ruleApi;
