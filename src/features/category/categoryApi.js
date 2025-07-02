@@ -3,51 +3,33 @@ import { baseApi } from "../../apiBaseQuery";
 export const categoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCategory: builder.query({
-      query: () => "/admin/dashboard/get-category",
-      providesTags: ["category"],
+      query: () => "/category",
+      providesTags: [],
     }),
 
     createCategory: builder.mutation({
       query: (data) => ({
-        url: "/admin/dashboard/create-category",
+        url: "/category",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ["category"],
+      invalidatesTags: [],
     }),
 
-    updateCategory: builder.mutation({
+    editCategory: builder.mutation({
       query: (data) => ({
-        url: `/admin/dashboard/update-category/${data.id}`,
-        method: "PATCH",
-        body: data.data,
-      }),
-      invalidatesTags: ["category"],
-    }),
-
-    updateToggleStatus: builder.mutation({
-      query: (data) => ({
-        url: `/admin/dashboard/toggle-status/${data.id}`,
+        url: `/category/${data.id}`,
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ["category"],
+      invalidatesTags: [],
     }),
 
-    deleteCategory: builder.mutation({
-      query: (id) => ({
-        url: `/admin/dashboard/delete-category/${id}`,
-        method: "DELETE",
-      }),
-      invalidatesTags: ["category"],
-    }),
   }),
 });
 
 export const {
   useGetCategoryQuery,
   useCreateCategoryMutation,
-  useUpdateCategoryMutation,
-  useUpdateToggleStatusMutation,
-  useDeleteCategoryMutation,
+  useEditCategoryMutation
 } = categoryApi;

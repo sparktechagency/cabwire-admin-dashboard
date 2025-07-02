@@ -1,6 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
-
-import { useTotalResentDriverQuery } from '../../features/dashboard/dashboardApi';
+import { useGetAllRecentDriverQuery } from "../../features/dashboard/driverApi";
 import RecentDriverJoinTableBody from "./RecentDriverJoinTableBody";
 
 const RecentDriverJoinTableHead = ({ columns }) => {
@@ -9,47 +8,23 @@ const RecentDriverJoinTableHead = ({ columns }) => {
   const queryParams = new URLSearchParams(location.search);
   const searchValue = queryParams.get("search") || "";
 
-  const { data: recentDriver, isLoading } = useTotalResentDriverQuery();
+  const { data: apiData, isLoading } = useGetAllRecentDriverQuery();
 
+  if (isLoading) {
+    return <div className="text-center py-4">Loading drivers...</div>;
+  }
 
-
-
-
-
-  const data = [
-    {
-      id: 1,
-      driverName: "John joe",
-      email: "example@email.com",
-      phoneNumber: "12345-678901",
-      carMake: "BMW",
-      carModel: "X1 SUV",
-      licenseNumber: "60",
-      status: "active",
-    },
-    {
-      id: 2,
-      driverName: "John joe",
-      email: "example@email.com",
-      phoneNumber: "12345-678901",
-      carMake: "BMW",
-      carModel: "X1 SUV",
-      licenseNumber: "60",
-      status: "active",
-    },
-    {
-      id: 3,
-      driverName: "John joe",
-      email: "example@email.com",
-      phoneNumber: "12345-678901",
-      carMake: "BMW",
-      carModel: "X1 SUV",
-      licenseNumber: "60",
-      status: "active",
-    },
-
-  ];
-
+  // Transform API data to match the expected format
+  const transformedData = apiData?.data?.map(driver => ({
+    id: driver._id,
+    driverName: driver.name || "N/A",
+    email: driver.email || "N/A",
+    phoneNumber: driver.phoneNumber || "N/A",
+    carMake: driver.vehicle?.make || "N/A",  // Assuming vehicle data is nested
+    carModel: driver.vehicle?.model || "N/A", // Assuming vehicle data is nested
+    licenseNumber: driver.licenseNumber || "N/A",
+    status: driver.status || "inactive" // Default to inactive if status not provided
+  })) || [];
 
   return (
     <div className="overflow-x-auto">
@@ -63,14 +38,14 @@ const RecentDriverJoinTableHead = ({ columns }) => {
 
         {/* Table Body */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
-          {
-            recentDriver?.data?.map((item, i) => (
-              <RecentDriverJoinTableBody item={item} key={i} />
+          {transformedData.length > 0 ? (
+            transformedData.map((item, i) => (
+              <RecentDriverJoinTableBody item={item} key={i} list={i + 1} />
             ))
-          }
+          ) : (
+            <div className="py-4 text-center">No recent drivers found</div>
+          )}
         </div>
-
-
       </div>
     </div>
   );

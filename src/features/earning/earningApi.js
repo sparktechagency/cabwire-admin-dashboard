@@ -7,7 +7,6 @@ export const earningApi = baseApi.injectEndpoints({
       query: () => `/payment`,
       providesTags: [],
     }),
-
   }),
 });
 

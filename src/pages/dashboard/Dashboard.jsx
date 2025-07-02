@@ -1,9 +1,7 @@
 import { lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AnalysisCard = lazy(() => import("../../components/AnalysisCard"));
-const OrderChart = lazy(() => import("../../components/dashboard/OrderChart"));
-const PieCharts = lazy(() => import("../../components/dashboard/PieChart"));
+
 const Revenue = lazy(() => import("../../components/dashboard/Revenue"));
 
 

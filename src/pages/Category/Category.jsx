@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import { ConfigProvider, Select, Spin, message } from "antd";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
+import { IoMdClose } from "react-icons/io";
 import { MdTune } from "react-icons/md";
-import { Select, ConfigProvider, Spin, message } from "antd";
-import { motion, AnimatePresence } from "framer-motion";
 import CustomLoading from "../../components/CustomLoading";
 import SingleMeal from "../../components/meal/SingleMeal";
 import {
   useCreateCategoryMutation,
   useGetCategoryQuery,
 } from "../../features/category/categoryApi";
-import { IoMdClose } from "react-icons/io";
 
 const { Option } = Select;
 
@@ -39,9 +39,9 @@ const Category = () => {
     isLoading: categoryLoading,
     error: categiryError,
     refetch
-  } = useGetCategoryQuery(dropdown , { refetchOnFocus: true, refetchOnReconnect: true });
+  } = useGetCategoryQuery(dropdown, { refetchOnFocus: true, refetchOnReconnect: true });
 
-  const [createCategory, { isLoading }] = useCreateCategoryMutation(undefined , { refetchOnFocus: true, refetchOnReconnect: true });
+  const [createCategory, { isLoading }] = useCreateCategoryMutation(undefined, { refetchOnFocus: true, refetchOnReconnect: true });
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -286,10 +286,9 @@ const Category = () => {
                         }}
                         placeholder="Enter Your Category Name"
                         className={`w-full px-4 py-2 border border-primary rounded focus:outline-none focus:ring-1 
-                          ${
-                            errors.categoryName
-                              ? "border-red-500 focus:ring-red-500"
-                              : "border-gray-300 focus:ring-primary"
+                          ${errors.categoryName
+                            ? "border-red-500 focus:ring-red-500"
+                            : "border-gray-300 focus:ring-primary"
                           }`}
                       />
                       {errors.categoryName && (

@@ -2,80 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
 
-const RecentDriverJoinTableBody = ({ item }) => {
-  /* 
-  {
-    "success": true,
-    "message": "Driver All are requered successful!!",
-    "meta": {
-        "page": 1,
-        "limit": 10,
-        "total": 2,
-        "totalPage": 1
-    },
-    "data": [
-        {
-            "geoLocation": {
-                "type": "Point",
-                "coordinates": [
-                    90.4125,
-                    23.8103
-                ]
-            },
-            "_id": "68528e89a19352787ce298d1",
-            "name": "My Name Driver",
-            "role": "DRIVER",
-            "email": "nitor10832@pngzero.com",
-            "image": "https://example.com/profile.jpg",
-            "status": "block",
-            "verified": false,
-            "isOnline": true,
-            "isDeleted": false,
-            "createdAt": "2025-06-18T10:01:45.200Z",
-            "updatedAt": "2025-06-18T15:06:16.005Z",
-            "driverLicense": {
-                "licenseNumber": 123456789,
-                "licenseExpiryDate": "2030-12-31T00:00:00.000Z",
-                "uploadDriversLicense": "https://example.com/license.jpg"
-            },
-            "driverVehicles": {
-                "vehiclesMake": "Toyota",
-                "vehiclesModel": "Corolla",
-                "vehiclesYear": "2018-01-01T00:00:00.000Z",
-                "vehiclesRegistrationNumber": 987654321,
-                "vehiclesInsuranceNumber": 123456789,
-                "vehiclesPicture": "https://example.com/license.jpg",
-                "vehiclesCategory": "Hatchback"
-            }
-        },
-        {
-            "geoLocation": {
-                "type": "Point",
-                "coordinates": [
-                    90.4125,
-                    23.8103
-                ]
-            },
-            "_id": "68528df7a19352787ce298c9",
-            "name": "John Doe",
-            "role": "DRIVER",
-            "email": "zn.rabby@gmail.com",
-            "image": "https://i.ibb.co/z5YHLV9/profile.png",
-            "status": "active",
-            "verified": true,
-            "isOnline": true,
-            "isDeleted": false,
-            "createdAt": "2025-06-18T09:59:19.528Z",
-            "updatedAt": "2025-07-02T11:53:20.007Z",
-            "stripeAccountId": "acct_1RdA4sPNNI1vZYZl"
-        }
-    ]
-}
-  
-  */
-
-
-
+const RecentDriverJoinTableBody = ({ item, list }) => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [itemId, setItemId] = useState(null);
 
@@ -109,8 +36,8 @@ const RecentDriverJoinTableBody = ({ item }) => {
     <>
       {/* Table Row with Improved Alignment */}
       <div className="grid items-center grid-cols-8  gap-2 px-2 my-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap">
-        <div className="flex items-center justify-center py-3">{item.id}</div>
-        <div className="flex items-center justify-center py-3">{item.name}</div>
+        <div className="flex items-center justify-center py-3">{list}</div>
+        <div className="flex items-center justify-center py-3">{item.driverName}</div>
         <div className="flex items-center justify-center py-3">{item.email}</div>
         <div className="flex items-center justify-center py-3">{item.phoneNumber}</div>
         <div className="flex items-center justify-center py-3">{item.carMake}</div>

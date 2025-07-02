@@ -15,14 +15,5 @@ export const baseApi = createApi({
     },
   }),
   endpoints: () => ({}),
-  tagTypes: [
-    "shop",
-    "businessManagement",
-    "totalEarning",
-    "dashboard",
-    "userManagement",
-    "profile",
-    "category",
-    "notification",
-  ],
+  tagTypes: [],
 });
