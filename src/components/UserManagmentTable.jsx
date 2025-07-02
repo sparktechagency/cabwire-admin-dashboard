@@ -1,48 +1,6 @@
-import React, { useEffect, useState } from "react";
-import UserManagementTableRow from "./UserManagementTableRow";
-import { useGetUserManagementQuery } from "../features/userManagement/userManagementApi";
-import CustomLoading from "./CustomLoading";
 import { useLocation, useNavigate } from "react-router-dom";
-
-
-const userdata = [
-  {
-    name: "John",
-    status: "Active",
-    email: "example@email.com",
-    location: "Demo Location",
-    phone: "12345-678901",
-    join: "01-02-2025",
-    boking: "no",
-  },
-  {
-    name: "John",
-    status: "Active",
-    email: "example@email.com",
-    location: "Demo Location",
-    phone: "12345-678901",
-    join: "01-02-2025",
-    boking: "no",
-  },
-  {
-    name: "John",
-    status: "Active",
-    email: "example@email.com",
-    location: "Demo Location",
-    phone: "12345-678901",
-    join: "01-02-2025",
-    boking: "no",
-  },
-  {
-    name: "John",
-    status: "Active",
-    email: "example@email.com",
-    location: "Demo Location",
-    phone: "12345-678901",
-    join: "01-02-2025",
-    boking: "no",
-  }
-]
+import { useGetUserManagementQuery } from '../features/userManagement/userManagementApi';
+import UserManagementTableRow from "./UserManagementTableRow";
 
 const Table = ({ columns }) => {
   const location = useLocation();
@@ -50,6 +8,12 @@ const Table = ({ columns }) => {
   const queryParams = new URLSearchParams(location.search);
   const pageParam = parseInt(queryParams.get("page")) || 1;
 
+  const { data, isLoading } = useGetUserManagementQuery(pageParam);
+  const users = data?.data || [];
+
+  if (isLoading) {
+    return <div className="text-center py-8">Loading users...</div>;
+  }
 
   return (
     <main className="overflow-x-auto">
@@ -65,16 +29,14 @@ const Table = ({ columns }) => {
 
         {/* Body section */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
-
-          {
-            userdata?.map((item, i) => (
-              <UserManagementTableRow item={item} key={i} list={i + 1} />
-            ))
-          }
-
+          {users?.map((user, i) => (
+            <UserManagementTableRow
+              key={user._id}
+              user={user}
+              list={i + 1 + ((pageParam - 1) * 10)}
+            />
+          ))}
         </div>
-
-
       </section>
     </main>
   );

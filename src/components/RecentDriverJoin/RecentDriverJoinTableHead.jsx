@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { useTotalResentDriverQuery } from '../../features/dashboard/dashboardApi';
 import RecentDriverJoinTableBody from "./RecentDriverJoinTableBody";
 
 const RecentDriverJoinTableHead = ({ columns }) => {
@@ -7,6 +8,9 @@ const RecentDriverJoinTableHead = ({ columns }) => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const searchValue = queryParams.get("search") || "";
+
+  const { data: recentDriver, isLoading } = useTotalResentDriverQuery();
+
 
 
 
@@ -43,7 +47,7 @@ const RecentDriverJoinTableHead = ({ columns }) => {
       licenseNumber: "60",
       status: "active",
     },
-   
+
   ];
 
 
@@ -60,7 +64,7 @@ const RecentDriverJoinTableHead = ({ columns }) => {
         {/* Table Body */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
           {
-            data.map((item, i) => (
+            recentDriver?.data?.map((item, i) => (
               <RecentDriverJoinTableBody item={item} key={i} />
             ))
           }

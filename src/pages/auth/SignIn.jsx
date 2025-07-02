@@ -1,35 +1,25 @@
-import { Button, Input, Form, message } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../features/auth/authApi";
 import { saveToken } from "../../features/auth/authService";
-import { baseURL } from "../../utils/BaseURL";
 
 export default function LoginPage() {
   const route = useNavigate();
   const [Login, { isLoading }] = useLoginMutation();
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${baseURL}/api/v1/auth/google`;
-  };
-
   const onFinish = async (values) => {
-    // try {
-    //   const response = await Login(values).unwrap();
-    //   saveToken(response?.data?.token);
-    //   localStorage.setItem("adminLoginId", response?.data?.user?._id);
-    //   route("/");
-    // } catch (error) {
-    //   if(error?.data){
-    //     message.error(error?.data?.message);
-    //   }else{
-    //     message.error("Server error Please try Another time")
-    //   }
-    // }
-
-    if(values?.email  === "hello@gmail.com" && values?.password === "hello123"){
+    try {
+      const response = await Login(values).unwrap();
+      console.log(response);
+      saveToken(response?.data?.token);
+      localStorage.setItem("adminLoginId", response?.data?.user?._id);
       route("/");
-    }else{
-      message.error("user not found")
+    } catch (error) {
+      if (error?.data) {
+        message.error(error?.data?.message);
+      } else {
+        message.error("Server error Please try Another time")
+      }
     }
   };
 

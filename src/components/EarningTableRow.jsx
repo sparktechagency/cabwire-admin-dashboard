@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useGetEarningsDetailQuery } from "../features/earning/earningApi";
 import { baseURL } from "../utils/BaseURL";
 import { IoCloseOutline } from "react-icons/io5";
 
@@ -8,10 +7,7 @@ const EarningTableRow = ({ item }) => {
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [itemId, setItemId] = useState(null);
 
-  const { data, isLoading } = useGetEarningsDetailQuery(itemId, {
-    skip: !isViewModalOpen
-  });
-
+ 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);

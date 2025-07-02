@@ -1,9 +1,9 @@
-import { debounce } from "lodash";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useGetEarningQuery } from "../features/earning/earningApi";
-import EarningTableRow from "./EarningTableRow";
+
 import { DatePicker } from 'antd';
+import { useGetEarningQuery } from '../features/earning/earningApi';
+import EarningTableRow from "./EarningTableRow";
 
 const EarningTable = ({ columns }) => {
   const location = useLocation();
@@ -13,9 +13,13 @@ const EarningTable = ({ columns }) => {
 
   const [isFetching, setIsFetching] = useState(false);
   const [currentPage, setCurrentPage] = useState(Number(queryParams.get("page")) || 1);
-  const { data: earningData, isLoading } = useGetEarningQuery(currentPage, { refetchOnFocus: true, refetchOnReconnect: true });
+  // const totalPages = earningData?.data?.pagination?.totalPage || 1;
 
-  const totalPages = earningData?.data?.pagination?.totalPage || 1;
+  const { data: earningData, isLoading } = useGetEarningQuery()
+
+  // console.log(earningData?.data)  // when back end developer complete pagination and filter with month then work on this
+
+
 
 
 

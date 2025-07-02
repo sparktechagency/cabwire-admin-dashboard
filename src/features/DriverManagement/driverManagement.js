@@ -2,14 +2,14 @@ import { baseApi } from "../../apiBaseQuery";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getUserManagement: builder.query({
-      query: (page) => `/user/all-users?page=${page}`,
+    getDriverManagement: builder.query({
+      query: ({ page, searchTerm }) => `/user/all-drivers?page=${page}&searchTerm=${searchTerm}`,
       providesTags: [],
     }),
 
-    updateUserStatus: builder.mutation({
+    updateDriverStatus: builder.mutation({
       query: (data) => ({
-        url: `/user/block-user/${data.id}`, // Updated endpoint
+        url: `/user/block-driver/${data.id}`, // Updated endpoint
         method: "PATCH",
         body: data,  /* {
     "status": "active"
@@ -20,5 +20,5 @@ export const userApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetUserManagementQuery, useUpdateUserStatusMutation } =
+export const { useGetDriverManagementQuery, useUpdateDriverStatusMutation } =
   userApi;

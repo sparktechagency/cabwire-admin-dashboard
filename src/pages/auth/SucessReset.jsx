@@ -1,6 +1,5 @@
 import { Button } from "antd";
 import { useState } from "react";
-import { FaArrowLeftLong } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 export default function PasswordResetSuccess() {
@@ -36,7 +35,7 @@ export default function PasswordResetSuccess() {
 
             <div className="mt-6">
               <Button
-                onClick={() => router('/')}
+                onClick={() => router('/auth/login')}
                 type="primary"
                 className="w-full"
                 size="large"
@@ -45,14 +44,6 @@ export default function PasswordResetSuccess() {
                 Continue
               </Button>
             </div>
-
-            <button
-              onClick={() => router('/auth/login')}
-              className="flex items-center justify-center w-full gap-2 mt-6 text-base text-gray-500 cursor-pointer"
-            >
-              <FaArrowLeftLong />
-              <span>Back to log in</span>
-            </button>
           </div>
         </div>
       </div>

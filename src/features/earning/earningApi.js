@@ -1,20 +1,14 @@
-import { baseApi } from "../../apiBaseQuery";
+import { baseApi } from '../../apiBaseQuery';
+
 
 export const earningApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getEarning: builder.query({
-      query: (page) => `/admin/dashboard/earnings?page=${page}`,
-      providesTags: ["totalEarning"],
+      query: () => `/payment`,
+      providesTags: [],
     }),
 
-    getEarningsDetail: builder.query({
-      query: (id) => ({
-        url: `/admin/dashboard/earnings/${id}`,
-        method: "GET",
-      }),
-      providesTags: ["totalEarning"],
-    }),
   }),
 });
 
-export const { useGetEarningQuery, useGetEarningsDetailQuery } = earningApi;
+export const { useGetEarningQuery } = earningApi;

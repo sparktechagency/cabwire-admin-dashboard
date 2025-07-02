@@ -1,8 +1,81 @@
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { IoCloseOutline } from "react-icons/io5";
 
 const RecentDriverJoinTableBody = ({ item }) => {
+  /* 
+  {
+    "success": true,
+    "message": "Driver All are requered successful!!",
+    "meta": {
+        "page": 1,
+        "limit": 10,
+        "total": 2,
+        "totalPage": 1
+    },
+    "data": [
+        {
+            "geoLocation": {
+                "type": "Point",
+                "coordinates": [
+                    90.4125,
+                    23.8103
+                ]
+            },
+            "_id": "68528e89a19352787ce298d1",
+            "name": "My Name Driver",
+            "role": "DRIVER",
+            "email": "nitor10832@pngzero.com",
+            "image": "https://example.com/profile.jpg",
+            "status": "block",
+            "verified": false,
+            "isOnline": true,
+            "isDeleted": false,
+            "createdAt": "2025-06-18T10:01:45.200Z",
+            "updatedAt": "2025-06-18T15:06:16.005Z",
+            "driverLicense": {
+                "licenseNumber": 123456789,
+                "licenseExpiryDate": "2030-12-31T00:00:00.000Z",
+                "uploadDriversLicense": "https://example.com/license.jpg"
+            },
+            "driverVehicles": {
+                "vehiclesMake": "Toyota",
+                "vehiclesModel": "Corolla",
+                "vehiclesYear": "2018-01-01T00:00:00.000Z",
+                "vehiclesRegistrationNumber": 987654321,
+                "vehiclesInsuranceNumber": 123456789,
+                "vehiclesPicture": "https://example.com/license.jpg",
+                "vehiclesCategory": "Hatchback"
+            }
+        },
+        {
+            "geoLocation": {
+                "type": "Point",
+                "coordinates": [
+                    90.4125,
+                    23.8103
+                ]
+            },
+            "_id": "68528df7a19352787ce298c9",
+            "name": "John Doe",
+            "role": "DRIVER",
+            "email": "zn.rabby@gmail.com",
+            "image": "https://i.ibb.co/z5YHLV9/profile.png",
+            "status": "active",
+            "verified": true,
+            "isOnline": true,
+            "isDeleted": false,
+            "createdAt": "2025-06-18T09:59:19.528Z",
+            "updatedAt": "2025-07-02T11:53:20.007Z",
+            "stripeAccountId": "acct_1RdA4sPNNI1vZYZl"
+        }
+    ]
+}
+  
+  */
+
+
+
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [itemId, setItemId] = useState(null);
 
@@ -37,13 +110,13 @@ const RecentDriverJoinTableBody = ({ item }) => {
       {/* Table Row with Improved Alignment */}
       <div className="grid items-center grid-cols-8  gap-2 px-2 my-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap">
         <div className="flex items-center justify-center py-3">{item.id}</div>
-        <div className="flex items-center justify-center py-3">{item.driverName}</div>
+        <div className="flex items-center justify-center py-3">{item.name}</div>
         <div className="flex items-center justify-center py-3">{item.email}</div>
-        <div className="flex items-center justify-center py-3">{item.phoneNumber}</div> 
-        <div className="flex items-center justify-center py-3">{item.carMake}</div> 
+        <div className="flex items-center justify-center py-3">{item.phoneNumber}</div>
+        <div className="flex items-center justify-center py-3">{item.carMake}</div>
         <div className="flex items-center justify-center py-3">{item.carModel}</div>
         <div className="flex items-center justify-center py-3">${item.licenseNumber}</div>
-        <div className="flex items-center justify-center py-3">{item.status}</div>
+        <div className={`flex items-center justify-center py-3 ${item.status === 'active' ? 'text-green-500' : 'text-red-500'}`}>{item.status}</div>
       </div>
 
       {/* Booking Details Modal */}
@@ -64,54 +137,53 @@ const RecentDriverJoinTableBody = ({ item }) => {
               className="relative w-full max-w-md p-6 bg-white rounded-lg shadow-xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <button 
-                onClick={handleModalClose} 
+              <button
+                onClick={handleModalClose}
                 className="absolute text-gray-500 top-3 right-3 hover:text-gray-800"
               >
                 <IoCloseOutline className="w-6 h-6" />
               </button>
-              
+
               <h2 className="mb-4 text-xl font-bold text-center text-red-600">Subscription Information</h2>
-            
-                <div className="px-3 py-4 space-y-3 border rounded-md border-primary">
-                  {/* User Information Section */}
-                  <div>
-                    <h3 className="mb-2 text-base font-semibold text-primary">User Information</h3>
-                    <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-md">
-                      <p className="text-sm"><span className="font-medium">User Name:</span> {item.ownerName}</p>
-                      <p className="text-sm"><span className="font-medium">Email:</span> {item.email || 'N/A'}</p>
-                      <p className="text-sm"><span className="font-medium">Phone Number:</span> {item.phoneNumber || 'N/A'}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Subscription Details Section */}
-                  <div>
-                    <h3 className="mb-2 text-base font-semibold text-primary">Subscription Details</h3>
-                    <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-md">
-                      <p className="text-sm"><span className="font-medium">Plan:</span> {item.planChoose}</p>
-                      <p className="text-sm"><span className="font-medium">Subscription Start:</span> {formatDate(item.startDate)}</p>
-                      <p className="text-sm"><span className="font-medium">Subscription End:</span> {formatDate(item.endDate)}</p>
-                      <p className="text-sm"><span className="font-medium">Total Days:</span> {calculateDays(item.startDate, item.endDate)}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Payment Information Section */}
-                  <div>
-                    <h3 className="mb-2 text-base font-semibold text-primary">Payment Information</h3>
-                    <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-md">
-                      <p className="text-sm"><span className="font-medium">Amount:</span> ${item.amount}</p>
-                      <p className="text-sm"><span className="font-medium">Transaction ID:</span> {item.transection || 'N/A'}</p>
-                      <p className="text-sm">
-                        <span className="font-medium">Status:</span> 
-                        <span className={`ml-2 px-2 py-1 rounded ${
-                          item.status === 'active' ? 'bg-green-500' : 'bg-red-500'
-                        } text-white`}>
-                          {item.status}
-                        </span>
-                      </p>
-                    </div>
+
+              <div className="px-3 py-4 space-y-3 border rounded-md border-primary">
+                {/* User Information Section */}
+                <div>
+                  <h3 className="mb-2 text-base font-semibold text-primary">User Information</h3>
+                  <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-md">
+                    <p className="text-sm"><span className="font-medium">User Name:</span> {item.ownerName}</p>
+                    <p className="text-sm"><span className="font-medium">Email:</span> {item.email || 'N/A'}</p>
+                    <p className="text-sm"><span className="font-medium">Phone Number:</span> {item.phoneNumber || 'N/A'}</p>
                   </div>
                 </div>
+
+                {/* Subscription Details Section */}
+                <div>
+                  <h3 className="mb-2 text-base font-semibold text-primary">Subscription Details</h3>
+                  <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-md">
+                    <p className="text-sm"><span className="font-medium">Plan:</span> {item.planChoose}</p>
+                    <p className="text-sm"><span className="font-medium">Subscription Start:</span> {formatDate(item.startDate)}</p>
+                    <p className="text-sm"><span className="font-medium">Subscription End:</span> {formatDate(item.endDate)}</p>
+                    <p className="text-sm"><span className="font-medium">Total Days:</span> {calculateDays(item.startDate, item.endDate)}</p>
+                  </div>
+                </div>
+
+                {/* Payment Information Section */}
+                <div>
+                  <h3 className="mb-2 text-base font-semibold text-primary">Payment Information</h3>
+                  <div className="flex flex-col gap-2 p-3 bg-gray-100 rounded-md">
+                    <p className="text-sm"><span className="font-medium">Amount:</span> ${item.amount}</p>
+                    <p className="text-sm"><span className="font-medium">Transaction ID:</span> {item.transection || 'N/A'}</p>
+                    <p className="text-sm">
+                      <span className="font-medium">Status:</span>
+                      <span className={`ml-2 px-2 py-1 rounded ${item.status === 'active' ? 'bg-green-500' : 'bg-red-500'
+                        } text-white`}>
+                        {item.status}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}

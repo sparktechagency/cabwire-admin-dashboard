@@ -1,49 +1,65 @@
+import { CloseOutlined, EyeOutlined } from "@ant-design/icons";
+import { Avatar, Button, message, Modal, Switch } from "antd";
 import { useState } from "react";
-import { Button, Modal, Switch, Avatar } from "antd";
-import { EditOutlined, EyeOutlined, CloseOutlined } from "@ant-design/icons";
+import { useUpdateDriverStatusMutation } from "../../features/DriverManagement/driverManagement";
 
-const DriverManagementTableBody = ({ item, list }) => {
+const DriverManagementTableBody = ({ driver, list }) => {
   const [switchModalVisible, setSwitchModalVisible] = useState(false);
-  const [userDetailsModalVisible, setUserDetailsModalVisible] = useState(false);
-  const [switchStatus, setSwitchStatus] = useState(item?.status === "Active");
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
+  const [updateDriverStatus] = useUpdateDriverStatusMutation();
 
-  const handleViewDetails = () => {
-    setUserDetailsModalVisible(true);
+  const handleViewDetails = () => setDetailsModalVisible(true);
+
+  const handleSwitchChange = () => setSwitchModalVisible(true);
+
+  const handleConfirmSwitch = async () => {
+    try {
+      const newStatus = driver.status === 'active' ? 'block' : 'active';
+      await updateDriverStatus({
+        id: driver._id,
+        status: newStatus
+      }).unwrap();
+      message.success(`Driver status updated to ${newStatus}`);
+      setSwitchModalVisible(false);
+    } catch (err) {
+      message.error('Failed to update driver status');
+    }
   };
 
-  const handleSwitchChange = (checked) => {
-    setSwitchModalVisible(true);
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
-  const handleConfirmSwitch = () => {
-    setSwitchStatus(!switchStatus);
-    setSwitchModalVisible(false);
+  const formatCurrency = (amount) => {
+    if (!amount) return '$0';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
   };
-
-  // Mock data for demonstration
-  const mockItem = {
-    driverName: "John Doe",
-    email: "john@example.com",
-    phone: "+1234567890",
-    carMake: "Toyota",
-    totalEarn: "$2,500",
-    adminRevenue: "$500",
-    status: "Active"
-  };
-
-  const currentItem = item || mockItem;
 
   return (
     <>
+      {/* Table Row */}
       <div className="grid grid-cols-9 my-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap">
-        <div className="py-3 text-center">{list || 1}</div>
-        <div className="px-3 py-3 text-center">{currentItem?.driverName}</div>
-        <div className="px-3 py-3 text-center">{currentItem.email}</div>
-        <div className="px-4 py-3 text-center">{currentItem.phone}</div>
-        <div className="px-4 py-3 text-center">{currentItem.carMake}</div>
-        <div className="px-4 py-3 text-center">{currentItem?.totalEarn}</div>
-        <div className="py-3 text-center">{currentItem?.adminRevenue}</div>
-        <div className="py-3 text-center">{currentItem?.status}</div>
+        <div className="py-3 text-center">{list}</div>
+        <div className="px-3 py-3 text-center">{driver?.name}</div>
+        <div className="px-3 py-3 text-center">{driver.email}</div>
+        <div className="px-4 py-3 text-center">
+          {driver.driverVehicles?.vehiclesMake || 'N/A'}
+        </div>
+        <div className="px-4 py-3 text-center">{driver.phone || 'N/A'}</div>
+        <div className="px-4 py-3 text-center">{formatCurrency(50000)}</div> {/* Mock total earn */}
+        <div className="py-3 text-center">{formatCurrency(3000)}</div> {/* Mock admin revenue */}
+        <div className={`py-3 text-center capitalize ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+          {driver?.status}
+        </div>
         <div className="flex items-center justify-between gap-2 border rounded border-orange-500 px-5 ml-6 mr-6">
           <Button
             type="text"
@@ -52,7 +68,7 @@ const DriverManagementTableBody = ({ item, list }) => {
             onClick={handleViewDetails}
           />
           <Switch
-            checked={switchStatus}
+            checked={driver.status === 'active'}
             size="small"
             className="ml-2"
             onChange={handleSwitchChange}
@@ -60,7 +76,7 @@ const DriverManagementTableBody = ({ item, list }) => {
         </div>
       </div>
 
-      {/* Switch Confirmation Modal */}
+      {/* Status Change Modal */}
       <Modal
         open={switchModalVisible}
         onCancel={() => setSwitchModalVisible(false)}
@@ -70,18 +86,22 @@ const DriverManagementTableBody = ({ item, list }) => {
         centered
       >
         <div className="text-center py-4">
-          <p className="text-lg font-medium mb-6">Do you want to Block This Account?</p>
+          <p className="text-lg font-medium mb-6">
+            {driver.status === 'active'
+              ? 'Do you want to block this driver?'
+              : 'Do you want to unblock this driver?'}
+          </p>
           <div className="flex justify-center gap-4">
             <Button
               onClick={() => setSwitchModalVisible(false)}
-              className="px-8 border-primary text-primary"
+              className="px-8 border-primary text-primary hover:bg-gray-100"
             >
               No
             </Button>
             <Button
               type="primary"
               onClick={handleConfirmSwitch}
-              className="px-8 bg-primary border-primary"
+              className="px-8 bg-primary border-primary hover:bg-primary-dark"
             >
               Yes
             </Button>
@@ -89,10 +109,10 @@ const DriverManagementTableBody = ({ item, list }) => {
         </div>
       </Modal>
 
-      {/* Driver Information Modal */}
+      {/* Driver Details Modal */}
       <Modal
-        open={userDetailsModalVisible}
-        onCancel={() => setUserDetailsModalVisible(false)}
+        open={detailsModalVisible}
+        onCancel={() => setDetailsModalVisible(false)}
         footer={null}
         closable={false}
         width={900}
@@ -100,15 +120,14 @@ const DriverManagementTableBody = ({ item, list }) => {
         className="driver-details-modal"
       >
         <div className="relative p-6">
-          {/* Header with Close Button */}
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Driver Information</h2>
+            <h2 className="text-2xl font-bold text-gray-800">Driver Details</h2>
             <Button
               type="text"
               icon={<CloseOutlined />}
               className="text-orange-500 hover:text-orange-600 text-lg"
-              onClick={() => setUserDetailsModalVisible(false)}
-              style={{ 
+              onClick={() => setDetailsModalVisible(false)}
+              style={{
                 border: '2px solid #f97316',
                 borderRadius: '50%',
                 width: '32px',
@@ -123,108 +142,132 @@ const DriverManagementTableBody = ({ item, list }) => {
           <div className="flex gap-6">
             {/* Left Column - Images */}
             <div className="flex flex-col gap-4 justify-center items-center w-80">
-              {/* Driver Photo */}
-              <div className="">
-                <img
-                  src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face"
-                  alt="Driver Photo"
-                  className="w-52 h-full object-cover rounded-full border-4 border-gray-200"
-                />
-              </div>
+              <Avatar
+                size={200}
+                src={driver.image || "https://i.ibb.co/z5YHLV9/profile.png"}
+                className="border-4 border-gray-200"
+              />
 
-              {/* Vehicle Photo */}
-              <div className="">
+              {driver.driverVehicles?.vehiclesPicture && (
                 <img
-                  src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=300&h=200&fit=crop"
+                  src={driver.driverVehicles.vehiclesPicture}
                   alt="Vehicle"
                   className="w-full h-48 object-cover rounded-lg border-2 border-gray-200"
                 />
-              </div>
+              )}
 
-              {/* License Photo */}
-              <div>
+              {driver.driverLicense?.uploadDriversLicense && (
                 <img
-                  src="https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=300&h=200&fit=crop"
+                  src={driver.driverLicense.uploadDriversLicense}
                   alt="Driver License"
                   className="w-full h-48 object-cover rounded-lg border-2 border-gray-200"
                 />
-              </div>
+              )}
             </div>
 
             {/* Right Column - Information */}
             <div className="flex-1">
               <div className="border-2 border-primary rounded-lg p-6">
                 <h3 className="text-xl font-semibold mb-6 text-gray-800">Driver Information</h3>
-                
-                <div className="space-y-4">
+
+                <div className="grid grid-cols-2 gap-4">
                   <div className="flex items-center">
                     <span className="font-medium w-48">Name:</span>
-                    <span className="text-gray-600">Sabbir Ahmed</span>
+                    <span className="text-gray-600">{driver?.name}</span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Phone Number:</span>
-                    <span className="text-gray-600">+123456574962</span>
+                    <span className="font-medium w-48">Status:</span>
+                    <span className={`capitalize ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+                      {driver?.status}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
                     <span className="font-medium w-48">Email:</span>
-                    <span className="text-gray-600">example@gmail.com</span>
+                    <span className="text-gray-600">{driver.email}</span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Date Of Birth:</span>
-                    <span className="text-gray-600">March 20, 2000</span>
+                    <span className="font-medium w-48">Phone:</span>
+                    <span className="text-gray-600">{driver.phone || 'N/A'}</span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Driver License Number:</span>
-                    <span className="text-gray-600">123456789</span>
+                    <span className="font-medium w-48">Joined Date:</span>
+                    <span className="text-gray-600">{formatDate(driver.createdAt)}</span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">License Expiry Date:</span>
-                    <span className="text-gray-600">March 20, 2027</span>
+                    <span className="font-medium w-48">License Number:</span>
+                    <span className="text-gray-600">
+                      {driver.driverLicense?.licenseNumber || 'N/A'}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Vehicles Make:</span>
-                    <span className="text-gray-600">BMW</span>
+                    <span className="font-medium w-48">License Expiry:</span>
+                    <span className="text-gray-600">
+                      {formatDate(driver.driverLicense?.licenseExpiryDate)}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium  w-48">Vehicles Model:</span>
-                    <span className="text-gray-600">X1SUV</span>
+                    <span className="font-medium w-48">Vehicle Make:</span>
+                    <span className="text-gray-600">
+                      {driver.driverVehicles?.vehiclesMake || 'N/A'}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Vehicles Model:</span>
-                    <span className="text-gray-600">2023</span>
+                    <span className="font-medium w-48">Vehicle Model:</span>
+                    <span className="text-gray-600">
+                      {driver.driverVehicles?.vehiclesModel || 'N/A'}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Vehicles Insurance Number:</span>
-                    <span className="text-gray-600">123456789</span>
+                    <span className="font-medium w-48">Vehicle Year:</span>
+                    <span className="text-gray-600">
+                      {driver.driverVehicles?.vehiclesYear
+                        ? new Date(driver.driverVehicles.vehiclesYear).getFullYear()
+                        : 'N/A'}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Vehicles Registration Number:</span>
-                    <span className="text-gray-600">123456789</span>
+                    <span className="font-medium w-48">Vehicle Category:</span>
+                    <span className="text-gray-600">
+                      {driver.driverVehicles?.vehiclesCategory || 'N/A'}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Total Earn:</span>
-                    <span className="text-gray-600">$50,000</span>
+                    <span className="font-medium w-48">Registration No:</span>
+                    <span className="text-gray-600">
+                      {driver.driverVehicles?.vehiclesRegistrationNumber || 'N/A'}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Online Payment Connected:</span>
-                    <span className="text-gray-600">Yes</span>
+                    <span className="font-medium w-48">Insurance No:</span>
+                    <span className="text-gray-600">
+                      {driver.driverVehicles?.vehiclesInsuranceNumber || 'N/A'}
+                    </span>
                   </div>
 
                   <div className="flex items-center">
-                    <span className="font-medium w-48">Admin Revenue:</span>
-                    <span className="text-gray-600">$3000</span>
+                    <span className="font-medium w-48">Online Status:</span>
+                    <span className="text-gray-600">
+                      {driver.isOnline ? 'Online' : 'Offline'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center">
+                    <span className="font-medium w-48">Verified:</span>
+                    <span className="text-gray-600">
+                      {driver.verified ? 'Yes' : 'No'}
+                    </span>
                   </div>
                 </div>
               </div>

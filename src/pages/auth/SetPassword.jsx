@@ -1,4 +1,4 @@
-import { Button, Input, Form, message } from "antd";
+import { Button, Form, Input, message } from "antd";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useResetPasswordMutation } from "../../features/auth/authApi";
@@ -64,9 +64,9 @@ export default function ResetPasswordPage() {
                 label="Password"
                 rules={[{ required: true, message: "Password is required!" }]}
               >
-                <Input.Password 
-                  placeholder="Enter your password" 
-                  size="large" 
+                <Input.Password
+                  placeholder="Enter your password"
+                  size="large"
                 />
               </Form.Item>
 
@@ -87,9 +87,9 @@ export default function ResetPasswordPage() {
                   }),
                 ]}
               >
-                <Input.Password 
-                  placeholder="Confirm your password" 
-                  size="large" 
+                <Input.Password
+                  placeholder="Confirm your password"
+                  size="large"
                 />
               </Form.Item>
 

@@ -1,6 +1,5 @@
 import { lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAllCountAnalysisQuery } from "../../features/dashboard/dashboardApi";
 
 const AnalysisCard = lazy(() => import("../../components/AnalysisCard"));
 const OrderChart = lazy(() => import("../../components/dashboard/OrderChart"));
@@ -14,17 +13,6 @@ import RecentDriverJoin from "../../components/RecentDriverJoin/RecentDriverJoin
 import RecentUserJoin from "../../components/RecentUserJoin/RecentUserJoin";
 
 const Dashboard = () => {
-  const {
-    data: allShop,
-    error: queryError,
-    isLoading: queryLoading,
-    isError,
-    status,
-  } = useAllCountAnalysisQuery(undefined, {
-    refetchOnFocus: true,
-    refetchOnReconnect: true,
-  });
-
   const navigate = useNavigate();
 
   // useEffect(() => {

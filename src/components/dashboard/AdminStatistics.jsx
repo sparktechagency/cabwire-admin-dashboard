@@ -1,5 +1,12 @@
+"use client";
+import { Skeleton } from 'antd';
+import { useAllDriverCountQuery, useAllUserCountQuery, useTotalEarningQuery } from '../../features/dashboard/dashboardApi';
 
 const AdminStatistics = () => {
+  const { data: allUserCount, isLoading: allUserCountLoading } = useAllUserCountQuery();
+  const { data: allDriverCount, isLoading: allDriverCountLoading } = useAllDriverCountQuery();
+  const { data: totalEaring, isLoading: totalEaringLoading } = useTotalEarningQuery();
+
   return (
     <div className="border h-[405px] flex flex-col justify-center border-primary rounded-lg p-3">
       <div className="w-full rounded-xl flex flex-col  gap-6">
@@ -11,18 +18,18 @@ const AdminStatistics = () => {
           <div className="flex items-center gap-3">
             <div className="border border-primary w-full rounded-xl p-4 ">
               <div className=" font-medium text-2xl mb-2">Total Earn</div>
-              <div className="text-xl font-bold text-gray-800">$27,000</div>
+              <div className="text-xl font-bold text-gray-800">{totalEaringLoading ? <Skeleton paragraph={{ rows: 0 }} /> : `$${totalEaring?.data.totalAmount}`}</div>
             </div>
 
             <div className="border border-primary w-full rounded-xl p-4 ">
               <div className=" font-medium text-2xl mb-2">Total Driver</div>
-              <div className="text-xl font-bold text-gray-800">50</div>
+              <div className="text-xl font-bold text-gray-800">{allDriverCountLoading ? <Skeleton paragraph={{ rows: 0 }} /> : `${allDriverCount?.data}`}</div>
             </div>
           </div>
 
           <div className="border border-primary rounded-xl p-4 ">
             <div className=" font-medium text-2xl mb-2">Total User</div>
-            <div className="text-xl font-bold text-gray-800">30</div>
+            <div className="text-xl font-bold text-gray-800">{allUserCountLoading ? <Skeleton paragraph={{ rows: 0 }} /> : `${allUserCount?.data}`}</div>
           </div>
         </div>
       </div>

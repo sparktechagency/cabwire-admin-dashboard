@@ -23,11 +23,12 @@ import ParkingManagement from "./pages/ParkingManagement/ParkingManagement";
 import UserManagement from "./pages/UserManagement/UserManagement";
 
 // DriverManagement & nested RequestTable
+import CategoryManagement from "./components/CategoryManagement/CategoryManagement";
 import DriverManagement from "./components/DriverManagement/DriverManagement";
 import RequestTable from "./components/DriverManagement/RequestTable";
-import Earning from "./pages/earning/Earning";
-import CategoryManagement from "./components/CategoryManagement/CategoryManagement";
+import ProtectedRoute from './components/ProtectedRoute';
 import ServicesManagement from "./components/ServicesManagement/ServicesManagement";
+import Earning from "./pages/earning/Earning";
 
 const Routers = () => {
   return (
@@ -42,10 +43,10 @@ const Routers = () => {
         <Route path="/auth/login/set_password" element={<SetPassword />} />
 
         {/* Protected Routes inside layout */}
-        <Route path="/" element={<Layout />}>
+        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Dashboard />} />
 
-         
+
 
           <Route path="user-management" element={<UserManagement />} />
 

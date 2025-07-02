@@ -2,36 +2,45 @@ import { baseApi } from "../../apiBaseQuery";
 
 export const dashboardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    allCountAnalysis: builder.query({
-      query: () => "/admin/dashboard/",
-      providesTags: ["dashboard"],
+    allRevinueAnalysis: builder.query({
+      query: () => "/payment/total-revinue",
+      providesTags: [""],
     }),
 
-    pieChartAnalysis: builder.query({
-      query: (year = 2024) => `/admin/dashboard/pie-chart?year=${year}`,
-      providesTags: ["dashboard"],
+    allUserCount : builder.query({
+      query: () => "/user/total-users-count",
+      providesTags: [""],
     }),
 
-    orderChartAnalysis: builder.query({
-      query: () => "/admin/dashboard/order-chart",
-      providesTags: ["dashboard"],
+    allDriverCount : builder.query({
+      query: () => "/user/all-driver-count",
+      providesTags: [""],
     }),
 
-    revinueChartAnalysis: builder.query({
-      query: (year = 2025) => `/admin/dashboard/revenue?year=${year}`,
-      providesTags: ["dashboard"],
+    totalEarning : builder.query({
+      query: () => "/payment/total-erning",
+      providesTags: [""],
     }),
-    customerMapAnalysis: builder.query({
-      query: () => "/admin/dashboard/customer-map",
-      providesTags: ["dashboard"],
+
+    totalResentDriver : builder.query({
+      query: () => "/user/total-resent-driver",
+      providesTags: [""],
     }),
+
+  totalResentUser : builder.query({
+      query: () => "/user/total-resent-users",
+      providesTags: [""],
+    }),
+      
+  
   }),
 });
 
 export const {
-  useAllCountAnalysisQuery,
-  usePieChartAnalysisQuery,
-  useOrderChartAnalysisQuery,
-  useRevinueChartAnalysisQuery,
-  useCustomerMapAnalysisQuery,
+  useAllRevinueAnalysisQuery,
+  useAllUserCountQuery,
+  useAllDriverCountQuery,
+  useTotalEarningQuery,
+  useTotalResentDriverQuery,
+  useTotalResentUserQuery
 } = dashboardApi;

@@ -1,58 +1,35 @@
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { useGetDriverManagementQuery } from '../../features/DriverManagement/driverManagement';
 import DriverManagementTableBody from "./DriverManagementTableBody";
-
-
-const userdata = [
-  {
-    id: 1,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  {
-    id: 2,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  {
-    id: 3,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  {
-    id: 4,
-    driverName: "John",
-    email: "example@email.com",
-    phone: "12345-678901",
-    carMake: "BMW",
-    totalEarn: "$50,000",
-    adminRevenue: "$3000",
-    status: "Active",
-  },
-  
-]
 
 const DriverManagementTableHead = ({ columns }) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const pageParam = parseInt(queryParams.get("page")) || 1;
+  const searchTerm = queryParams.get("search") || '';
 
+  const { data, isLoading, isError } = useGetDriverManagementQuery({
+    page: pageParam,
+    searchTerm
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="text-center py-8 text-red-500">
+        Failed to load drivers. Please try again later.
+      </div>
+    );
+  }
+
+  const drivers = data?.data || [];
 
   return (
     <main className="overflow-x-auto">
@@ -68,16 +45,20 @@ const DriverManagementTableHead = ({ columns }) => {
 
         {/* Body section */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
-
-          {
-            userdata?.map((item, i) => (
-              <DriverManagementTableBody item={item} key={i} list={i + 1} />
+          {drivers.length > 0 ? (
+            drivers.map((driver, i) => (
+              <DriverManagementTableBody
+                key={driver._id}
+                driver={driver}
+                list={i + 1 + ((pageParam - 1) * 10)}
+              />
             ))
-          }
-
+          ) : (
+            <div className="py-8 text-center text-gray-500">
+              No drivers found
+            </div>
+          )}
         </div>
-
-
       </section>
     </main>
   );

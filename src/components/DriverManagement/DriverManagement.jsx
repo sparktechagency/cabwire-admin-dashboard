@@ -1,6 +1,6 @@
 import { Button } from "antd";
-import DriverManagementTableHead from "./DriverManagementTableHead";
 import { Link } from "react-router-dom";
+import DriverManagementTable from './DriverManagementTableHead';
 
 
 const columns = [
@@ -22,7 +22,7 @@ const DriverManagement = () => {
         <Link to="/driver-management/request"> <Button type="primary">Request (03)</Button></Link>
       </div>
       <div>
-        <DriverManagementTableHead columns={columns} />
+        <DriverManagementTable columns={columns} />
       </div>
     </div>
   );

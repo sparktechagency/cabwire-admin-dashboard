@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { useTotalResentUserQuery } from '../../features/dashboard/dashboardApi';
 import RecentUserJoinTableBody from "./RecentUserJoinTableBody";
 
 const RecentUserJoinTableHead = ({ columns }) => {
@@ -8,7 +9,9 @@ const RecentUserJoinTableHead = ({ columns }) => {
   const queryParams = new URLSearchParams(location.search);
   const searchValue = queryParams.get("search") || "";
 
+  const { data: recentUser, isLoading } = useTotalResentUserQuery();
 
+  console.log(recentUser?.data)
 
 
 
@@ -60,7 +63,7 @@ const RecentUserJoinTableHead = ({ columns }) => {
         {/* Table Body */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
           {
-            data.map((item, i) => (
+            recentUser?.data.map((item, i) => (
               <RecentUserJoinTableBody item={item} key={i} />
             ))
           }
