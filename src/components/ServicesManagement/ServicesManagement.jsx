@@ -1,9 +1,8 @@
-import { Button, message,  Select, } from 'antd';
+import { Button, Select } from 'antd';
 import { useState } from 'react';
 
-import ServicesManagementTableHead from './ServicesManagementTableHead';
-import DepartmentManagementFormModal from '../CategoryManagement/DepartmentManagementFormModal';
 import ServicesManagementModal from './ServicesManagementModal';
+import ServicesManagementTableHead from './ServicesManagementTableHead';
 
 
 
@@ -44,18 +43,7 @@ function ServicesManagement() {
 
   // Handle department creation
   const handleCreateDepartment = (values) => {
-    const newDepartment = {
-      key: (departments.length + 1).toString(),
-      id: departments.length + 1,
-      institution: values.institution,
-      name: values.name,
-      totalEmployee: values.totalEmployee,
-      status: 'Active'
-    };
-
-    setDepartments([...departments, newDepartment]);
-    setIsNewDepartmentModalVisible(false);
-    message.success('Department created successfully');
+    console.log(values);
   };
 
 
@@ -89,12 +77,12 @@ function ServicesManagement() {
   return (
     <div className="p-6 bg-gray-50">
       <div className="mb-6 flex justify-end">
-            <Button
-              type="primary"
-              onClick={() => setIsNewDepartmentModalVisible(true)}
-            >
-              Add New Services
-            </Button>
+        <Button
+          type="primary"
+          onClick={() => setIsNewDepartmentModalVisible(true)}
+        >
+          Add New Services
+        </Button>
       </div>
 
 
@@ -106,7 +94,7 @@ function ServicesManagement() {
         mode="create"
         visible={isNewDepartmentModalVisible}
         onCancel={() => setIsNewDepartmentModalVisible(false)}
-        onCreate={handleCreateDepartment}
+        onSubmit={handleCreateDepartment}
       />
     </div>
   );

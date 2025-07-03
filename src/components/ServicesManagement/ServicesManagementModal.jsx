@@ -1,110 +1,191 @@
-import { Button, Form, Input, Modal, Select } from 'antd';
-import { useEffect } from 'react';
+import { UploadOutlined } from '@ant-design/icons';
+import { Button, Form, Image, Input, message, Modal, Upload } from 'antd';
+import { useEffect, useState } from 'react';
 
-const { Option } = Select;
-
-const ServicesManagementModal = ({ 
-  mode = 'create', // 'create' or 'edit'
-  visible, 
-  onCancel, 
+const ServicesManagementModal = ({
+  mode = 'create',
+  visible,
+  onCancel,
   onSubmit,
-  institutions = [],
   initialValues = {}
 }) => {
   const [form] = Form.useForm();
+  const [imageUrl, setImageUrl] = useState(null);
+  const [fileList, setFileList] = useState([]);
 
-  // Set form values when mode changes or initialValues update
   useEffect(() => {
     if (mode === 'edit' && visible) {
       form.setFieldsValue(initialValues);
+      if (initialValues.image) {
+        setImageUrl(initialValues.image);
+        setFileList([{
+          uid: '-1',
+          name: 'image.png',
+          status: 'done',
+          url: initialValues.image,
+        }]);
+      }
     } else if (mode === 'create' && visible) {
       form.resetFields();
+      setImageUrl(null);
+      setFileList([]);
     }
   }, [mode, visible, initialValues, form]);
 
   const handleSubmit = () => {
     form.validateFields().then(values => {
-      onSubmit(values);
+      // Check if image is uploaded
+      if (!imageUrl) {
+        message.error('Please upload an image!');
+        return;
+      }
+
+      const formData = {
+        ...values,
+        image: imageUrl
+      };
+      console.log('Form submitted with data:', formData); // This will log the complete data
+      onSubmit(formData);
+
       if (mode === 'create') {
         form.resetFields();
+        setImageUrl(null);
+        setFileList([]);
       }
+    }).catch(err => {
+      console.log('Validation failed:', err);
     });
   };
 
   const handleCancel = () => {
     form.resetFields();
+    setImageUrl(null);
+    setFileList([]);
     onCancel();
   };
 
+  const beforeUpload = (file) => {
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      message.error('You can only upload image files!');
+      return Upload.LIST_IGNORE;
+    }
+    const isLt2M = file.size / 1024 / 1024 < 2;
+    if (!isLt2M) {
+      message.error('Image must smaller than 2MB!');
+      return Upload.LIST_IGNORE;
+    }
+    return false; // Return false to handle upload manually
+  };
+
+  const handleChange = (info) => {
+    let newFileList = [...info.fileList];
+
+    // Limit to 1 file
+    newFileList = newFileList.slice(-1);
+
+    if (info.file.status === 'done') {
+      // Get base64 URL for the image
+      getBase64(info.file.originFileObj, url => {
+        setImageUrl(url);
+        setFileList(newFileList);
+      });
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    } else {
+      setFileList(newFileList);
+    }
+  };
+
+  const getBase64 = (file, callback) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => callback(reader.result));
+    reader.readAsDataURL(file);
+  };
+
+  const uploadButton = (
+    <div>
+      <UploadOutlined />
+      <div style={{ marginTop: 8 }}>Upload Image</div>
+    </div>
+  );
+
   const modalFooter = (
     <div>
-      <Button 
-        style={{paddingLeft: "30px", paddingRight: "30px", fontSize: "16px", marginRight: 8}} 
+      <Button
+        style={{ paddingLeft: "30px", paddingRight: "30px", fontSize: "16px", marginRight: 8 }}
         onClick={handleCancel}
       >
         Cancel
       </Button>
-      <Button 
-        type="primary" 
-        style={{paddingLeft: "40px", paddingRight: "40px", fontSize: "16px"}} 
-        onClick={handleSubmit} 
-        className=""
+      <Button
+        type="primary"
+        style={{ paddingLeft: "40px", paddingRight: "40px", fontSize: "16px" }}
+        onClick={handleSubmit}
       >
         {mode === 'create' ? 'Create' : 'Update'}
       </Button>
     </div>
   );
 
-  const modalTitle = mode === 'create' 
-    ? 'Create New Category' 
-    : 'Edit Category';
+  const modalTitle = mode === 'create'
+    ? 'Create New Service'
+    : 'Edit Service';
 
   return (
     <Modal
-      title={<span style={{ fontWeight: "bold", color:"#041B44", paddingTop:"20px", paddbottom:"20px" }}>{modalTitle}</span>}
+      title={<span style={{ fontWeight: "bold", color: "#041B44", paddingTop: "20px", paddbottom: "20px" }}>{modalTitle}</span>}
       open={visible}
       onCancel={handleCancel}
       footer={modalFooter}
       closable={false}
     >
-      <Form 
-        form={form} 
+      <Form
+        form={form}
         layout="vertical"
         initialValues={mode === 'edit' ? initialValues : {
-          name: "",
-          institution: ""
+          serviceName: "",
+          baseFare: ""
         }}
       >
-        <Form.Item 
-          name="serviceName" 
-          label={<span style={{ fontWeight: "bold" }}>Services Name</span>}
-          rules={[{ required: true, message: 'Please input services name!' }]}
+        <Form.Item
+          name="serviceName"
+          label={<span style={{ fontWeight: "bold" }}>Service Name</span>}
+          rules={[{ required: true, message: 'Please input service name!' }]}
         >
-          <Input placeholder="Enter services name" />
+          <Input placeholder="Enter service name" />
         </Form.Item>
 
-         <Form.Item 
-          name="basePrice" 
-          label={<span style={{ fontWeight: "bold" }}>Base Price</span>}
-          rules={[{ required: true, message: 'Please input base price!' }]}
+        <Form.Item
+          name="baseFare"
+          label={<span style={{ fontWeight: "bold" }}>Base Fare ($)</span>}
+          rules={[{ required: true, message: 'Please input base fare!' }]}
         >
-          <Input placeholder="Enter base price" />
+          <Input type="number" placeholder="Enter base fare" />
         </Form.Item>
 
-         <Form.Item 
-          name="ratePerKm" 
-          label={<span style={{ fontWeight: "bold" }}>Rate Per Km ($)</span>}
-          rules={[{ required: true, message: 'Please input rate per km!' }]}
+        <Form.Item
+          name="image"
+          label={<span style={{ fontWeight: "bold" }}>Service Image</span>}
+          rules={[{ required: true, message: 'Please upload an image!' }]}
         >
-          <Input placeholder="Enter rate per km" />
-        </Form.Item>
-
-         <Form.Item 
-          name="highestHour" 
-          label={<span style={{ fontWeight: "bold" }}>Highest Hour</span>}
-          rules={[{ required: true, message: 'Please input highest hour!' }]}
-        >
-          <Input placeholder="Enter highest hour" />
+          <Upload
+            name="image"
+            listType="picture-card"
+            fileList={fileList}
+            beforeUpload={beforeUpload}
+            onChange={handleChange}
+            accept="image/*"
+          >
+            {imageUrl ? (
+              <Image
+                src={imageUrl}
+                alt="service"
+                style={{ width: '100%' }}
+                preview={false}
+              />
+            ) : uploadButton}
+          </Upload>
         </Form.Item>
       </Form>
     </Modal>
