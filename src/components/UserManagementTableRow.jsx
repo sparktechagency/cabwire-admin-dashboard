@@ -3,11 +3,11 @@ import { Avatar, Button, Modal, Switch, message } from "antd";
 import { useState } from "react";
 import { useUpdateUserStatusMutation } from '../features/userManagement/userManagementApi';
 
-
 const UserManagementTableRow = ({ user, list }) => {
   const [switchModalVisible, setSwitchModalVisible] = useState(false);
   const [userDetailsModalVisible, setUserDetailsModalVisible] = useState(false);
-  const [updateUserStatus] = useUpdateUserStatusMutation();
+  const [currentStatus, setCurrentStatus] = useState(user.status); // Add local state
+  const [updateUserStatus , {isLoading}] = useUpdateUserStatusMutation();
 
   const handleViewDetails = () => {
     setUserDetailsModalVisible(true);
@@ -18,15 +18,18 @@ const UserManagementTableRow = ({ user, list }) => {
   };
 
   const handleConfirmSwitch = async () => {
-    // console.log(user._id)
     try {
-      const newStatus = user.status === 'active' ? 'block' : 'active';
+      const newStatus = currentStatus === 'active' ? 'block' : 'active';
       const response = await updateUserStatus({
         id: user._id,
         status: newStatus
       }).unwrap();
 
-      console.log(response)
+      console.log(response);
+
+      // Update local state immediately
+      setCurrentStatus(newStatus);
+
       message.success(`User status updated to ${newStatus}`);
       setSwitchModalVisible(false);
     } catch (err) {
@@ -55,7 +58,7 @@ const UserManagementTableRow = ({ user, list }) => {
         <div className="px-4 py-3 text-center">{user.phone || 'N/A'}</div>
         <div className="px-4 py-3 text-center">{formatDate(user.createdAt)}</div>
         <div className="py-3 text-center">{"N/A"}</div> {/* Booking info */}
-        <div className="py-3 text-center capitalize">{user?.status}</div>
+        <div className="py-3 text-center capitalize">{currentStatus}</div>
         <div className="flex items-center justify-between gap-2 border rounded border-primary px-5 ml-6 mr-6">
           <Button
             type="text"
@@ -64,7 +67,7 @@ const UserManagementTableRow = ({ user, list }) => {
             onClick={handleViewDetails}
           />
           <Switch
-            checked={user.status === 'active'}
+            checked={currentStatus === 'active'}
             size="small"
             className="ml-2"
             onChange={handleSwitchChange}
@@ -83,7 +86,7 @@ const UserManagementTableRow = ({ user, list }) => {
       >
         <div className="text-center py-4">
           <p className="text-lg font-medium mb-6">
-            {user.status === 'active'
+            {currentStatus === 'active'
               ? 'Do you want to block this account?'
               : 'Do you want to unblock this account?'}
           </p>
@@ -97,6 +100,7 @@ const UserManagementTableRow = ({ user, list }) => {
             <Button
               type="primary"
               onClick={handleConfirmSwitch}
+              loading={isLoading}
               className="px-8 bg-primary"
             >
               Yes
@@ -156,7 +160,7 @@ const UserManagementTableRow = ({ user, list }) => {
 
               <div className="flex gap-1 items-center py-2">
                 <span className="font-medium">Status:</span>
-                <span className="capitalize">{user?.status}</span>
+                <span className="capitalize">{currentStatus}</span>
               </div>
 
               <div className="flex gap-1 items-center py-2 ">

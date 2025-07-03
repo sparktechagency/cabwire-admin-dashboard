@@ -6,7 +6,8 @@ import { useUpdateDriverStatusMutation } from "../../features/DriverManagement/d
 const DriverManagementTableBody = ({ driver, list }) => {
   const [switchModalVisible, setSwitchModalVisible] = useState(false);
   const [detailsModalVisible, setDetailsModalVisible] = useState(false);
-  const [updateDriverStatus] = useUpdateDriverStatusMutation();
+  const [currentStatus, setCurrentStatus] = useState(driver.status); // Add local state
+  const [updateDriverStatus, { isLoading }] = useUpdateDriverStatusMutation();
 
   const handleViewDetails = () => setDetailsModalVisible(true);
 
@@ -14,11 +15,15 @@ const DriverManagementTableBody = ({ driver, list }) => {
 
   const handleConfirmSwitch = async () => {
     try {
-      const newStatus = driver.status === 'active' ? 'block' : 'active';
+      const newStatus = currentStatus === 'active' ? 'block' : 'active';
       await updateDriverStatus({
         id: driver._id,
         status: newStatus
       }).unwrap();
+
+      // Update local state immediately
+      setCurrentStatus(newStatus);
+
       message.success(`Driver status updated to ${newStatus}`);
       setSwitchModalVisible(false);
     } catch (err) {
@@ -57,10 +62,10 @@ const DriverManagementTableBody = ({ driver, list }) => {
         <div className="px-4 py-3 text-center">{driver.phone || 'N/A'}</div>
         <div className="px-4 py-3 text-center">{formatCurrency(50000)}</div> {/* Mock total earn */}
         <div className="py-3 text-center">{formatCurrency(3000)}</div> {/* Mock admin revenue */}
-        <div className={`py-3 text-center capitalize ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-          {driver?.status}
+        <div className={`py-3 text-center capitalize ${currentStatus === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+          {currentStatus}
         </div>
-        <div className="flex items-center justify-between gap-2 border rounded border-orange-500 px-5 ml-6 mr-6">
+        <div className="flex items-center justify-between gap-2 border rounded border-primary px-5 ml-6 mr-6">
           <Button
             type="text"
             icon={<EyeOutlined style={{ fontSize: '18px' }} />}
@@ -68,7 +73,7 @@ const DriverManagementTableBody = ({ driver, list }) => {
             onClick={handleViewDetails}
           />
           <Switch
-            checked={driver.status === 'active'}
+            checked={currentStatus === 'active'}
             size="small"
             className="ml-2"
             onChange={handleSwitchChange}
@@ -87,7 +92,7 @@ const DriverManagementTableBody = ({ driver, list }) => {
       >
         <div className="text-center py-4">
           <p className="text-lg font-medium mb-6">
-            {driver.status === 'active'
+            {currentStatus === 'active'
               ? 'Do you want to block this driver?'
               : 'Do you want to unblock this driver?'}
           </p>
@@ -101,6 +106,7 @@ const DriverManagementTableBody = ({ driver, list }) => {
             <Button
               type="primary"
               onClick={handleConfirmSwitch}
+              loading={isLoading}
               className="px-8 bg-primary border-primary hover:bg-primary-dark"
             >
               Yes
@@ -178,8 +184,8 @@ const DriverManagementTableBody = ({ driver, list }) => {
 
                   <div className="flex items-center">
                     <span className="font-medium w-48">Status:</span>
-                    <span className={`capitalize ${driver.status === 'active' ? 'text-green-600' : 'text-red-600'}`}>
-                      {driver?.status}
+                    <span className={`capitalize ${currentStatus === 'active' ? 'text-green-600' : 'text-red-600'}`}>
+                      {currentStatus}
                     </span>
                   </div>
 
