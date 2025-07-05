@@ -1,12 +1,11 @@
 import { Modal } from 'antd';
-import React from 'react';
 
 const ServicesViewDetailsModal = ({
   isOpen,
   onClose,
-  modalTitle = "Institution Information",
+  modalTitle = "Service Information",
   imageSrc = "/images/viewDetails.png",
-  imageAlt = "Institution image",
+  imageAlt = "Service image",
   details = [],
   width = 550
 }) => {

@@ -1,9 +1,11 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Image, Input, message, Modal, Upload } from 'antd';
 import { useEffect, useState } from 'react';
+import { useCreateServiceMutation, useUpdateServiceMutation } from '../../features/service/serviceApi';
+import { baseURL } from '../../utils/BaseURL';
 
 const ServicesManagementModal = ({
-  mode = 'create',
+  mode = 'create', // edit
   visible,
   onCancel,
   onSubmit,
@@ -13,48 +15,57 @@ const ServicesManagementModal = ({
   const [imageUrl, setImageUrl] = useState(null);
   const [fileList, setFileList] = useState([]);
 
-  useEffect(() => {
-    if (mode === 'edit' && visible) {
-      form.setFieldsValue(initialValues);
-      if (initialValues.image) {
-        setImageUrl(initialValues.image);
-        setFileList([{
-          uid: '-1',
-          name: 'image.png',
-          status: 'done',
-          url: initialValues.image,
-        }]);
-      }
-    } else if (mode === 'create' && visible) {
-      form.resetFields();
-      setImageUrl(null);
-      setFileList([]);
-    }
-  }, [mode, visible, initialValues, form]);
+  const [createService] = useCreateServiceMutation();
+  const [updateService] = useUpdateServiceMutation();
 
-  const handleSubmit = () => {
-    form.validateFields().then(values => {
-      // Check if image is uploaded
-      if (!imageUrl) {
+  useEffect(() => {
+    if (initialValues.image) {
+      setImageUrl(initialValues.image);
+      // setFileList([{
+      //   uid: '-1',
+      //   name: 'current-image',
+      //   status: 'done',
+      //   url: initialValues.image,
+      // }]);
+    }
+  }, [initialValues.image]);
+
+  const handleSubmit = async () => {
+    try {
+      const value = await form.validateFields();
+      const formdata = new FormData();
+      const data = {
+        serviceName: value.name,
+        baseFare: value.baseFare,
+      }
+      formdata.append("data", JSON.stringify(data));
+
+      if (mode === 'create' && (!value.image || !value.image.file)) {
         message.error('Please upload an image!');
         return;
       }
 
-      const formData = {
-        ...values,
-        image: imageUrl
-      };
-      console.log('Form submitted with data:', formData); // This will log the complete data
-      onSubmit(formData);
+      if (value.image && value.image.file) {
+        formdata.append("image", value.image.file);
+      }
 
       if (mode === 'create') {
-        form.resetFields();
-        setImageUrl(null);
-        setFileList([]);
+        const response = await createService(formdata).unwrap();
+        console.log(response)
+        message.success('Service created successfully');
+      } else {
+        await updateService({ id: initialValues.id, data: formdata }).unwrap();
+        message.success('Service updated successfully');
       }
-    }).catch(err => {
-      console.log('Validation failed:', err);
-    });
+
+      form.resetFields();
+      setImageUrl(null);
+      setFileList([]);
+      onCancel();
+    } catch (err) {
+      console.error('Failed to submit:', err);
+      message.error("You can give the service name any of these 5: 'car' | 'emergency-car' | 'rental-car' | 'cabwire-share' | 'package'");
+    }
   };
 
   const handleCancel = () => {
@@ -70,30 +81,21 @@ const ServicesManagementModal = ({
       message.error('You can only upload image files!');
       return Upload.LIST_IGNORE;
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must smaller than 2MB!');
-      return Upload.LIST_IGNORE;
-    }
-    return false; // Return false to handle upload manually
+    return false;
   };
 
   const handleChange = (info) => {
     let newFileList = [...info.fileList];
-
-    // Limit to 1 file
     newFileList = newFileList.slice(-1);
 
-    if (info.file.status === 'done') {
-      // Get base64 URL for the image
+    setFileList(newFileList);
+
+    if (newFileList.length === 0) {
+      setImageUrl(null);
+    } else if (info.file && info.file.originFileObj) {
       getBase64(info.file.originFileObj, url => {
         setImageUrl(url);
-        setFileList(newFileList);
       });
-    } else if (info.file.status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    } else {
-      setFileList(newFileList);
     }
   };
 
@@ -134,7 +136,7 @@ const ServicesManagementModal = ({
 
   return (
     <Modal
-      title={<span style={{ fontWeight: "bold", color: "#041B44", paddingTop: "20px", paddbottom: "20px" }}>{modalTitle}</span>}
+      title={<span style={{ fontWeight: "bold", color: "#041B44", paddingTop: "20px", paddingBottom: "20px" }}>{modalTitle}</span>}
       open={visible}
       onCancel={handleCancel}
       footer={modalFooter}
@@ -143,13 +145,10 @@ const ServicesManagementModal = ({
       <Form
         form={form}
         layout="vertical"
-        initialValues={mode === 'edit' ? initialValues : {
-          serviceName: "",
-          baseFare: ""
-        }}
+        initialValues={initialValues}
       >
         <Form.Item
-          name="serviceName"
+          name="name"
           label={<span style={{ fontWeight: "bold" }}>Service Name</span>}
           rules={[{ required: true, message: 'Please input service name!' }]}
         >
@@ -167,7 +166,7 @@ const ServicesManagementModal = ({
         <Form.Item
           name="image"
           label={<span style={{ fontWeight: "bold" }}>Service Image</span>}
-          rules={[{ required: true, message: 'Please upload an image!' }]}
+          rules={[{ required: mode === 'create', message: 'Please upload an image!' }]}
         >
           <Upload
             name="image"
@@ -176,10 +175,11 @@ const ServicesManagementModal = ({
             beforeUpload={beforeUpload}
             onChange={handleChange}
             accept="image/*"
+            maxCount={1}
           >
             {imageUrl ? (
               <Image
-                src={imageUrl}
+                src={`${baseURL}${imageUrl}`}
                 alt="service"
                 style={{ width: '100%' }}
                 preview={false}

@@ -1,36 +1,56 @@
 import { baseApi } from "../../apiBaseQuery";
 
-export const userApi = baseApi.injectEndpoints({
+export const serviceApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
-    createService : builder.mutation({
+    createService: builder.mutation({
       query: (data) => ({
         url: `/service/create-service`,
         method: "POST",
-        body: data
+        body: data,
       }),
+      invalidatesTags: ['Services'],
     }),
 
-    updateService : builder.mutation({
-      query: (data , id) => ({
+    updateService: builder.mutation({
+      query: ({ id, data }) => ({
         url: `/service/${id}`,
         method: "PATCH",
-        body: data
+        body: data,
       }),
+      invalidatesTags: ['Services'],
     }),
 
-     getParticularService : builder.query({
+    updateServiceStatus: builder.mutation({
+      query: ({ id, status }) => ({
+        url: `/service/${id}`,
+        method: "PATCH",
+        body: { status },
+      }),
+      invalidatesTags: ['Services'],
+    }),
+
+    getParticularService: builder.query({
       query: (id) => ({
         url: `/service/${id}`,
         method: "GET",
       }),
+      providesTags: ['Service'],
     }),
 
-   getAllService : builder.query({
+    getAllServices: builder.query({
       query: () => ({
         url: `/service`,
         method: "GET",
       }),
+      providesTags: ['Services'],
+    }),
+
+    deleteService: builder.mutation({
+      query: (id) => ({
+        url: `/service/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ['Services'],
     }),
   }),
 });
@@ -38,6 +58,8 @@ export const userApi = baseApi.injectEndpoints({
 export const {
   useCreateServiceMutation,
   useUpdateServiceMutation,
+  useUpdateServiceStatusMutation,
   useGetParticularServiceQuery,
-  useGetAllServiceQuery
-} = userApi;
+  useGetAllServicesQuery,
+  useDeleteServiceMutation,
+} = serviceApi;
