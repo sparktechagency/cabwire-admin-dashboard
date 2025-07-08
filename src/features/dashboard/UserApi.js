@@ -13,7 +13,7 @@ export const userApi = baseApi.injectEndpoints({
     }),
 
     getAllRecentUser: builder.query({
-      query: () => "/user/total-resent-users",
+      query: (page) => `/user/total-resent-users?page=${page}&limit=${5}`,
       providesTags: [],
     }),
 

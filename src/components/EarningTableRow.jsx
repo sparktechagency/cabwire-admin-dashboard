@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { IoCloseOutline } from "react-icons/io5";
@@ -34,18 +35,18 @@ const EarningTableRow = ({ item }) => {
   return (
     <>
       {/* Table Row with Improved Alignment */}
-      <div className="grid items-center grid-cols-11 gap-2 px-2 my-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap">
-        <div className="flex items-center justify-center py-3">{item.amount}</div>
-        <div className="flex items-center justify-center py-3">{item.method}</div>
-        <div className="flex items-center justify-center py-3">{item.status}</div>
-        <div className="flex items-center justify-center py-3">{item.driverAmount}</div>
-        <div className="flex items-center justify-center py-3">{item.adminAmount}</div>
-        <div className="flex items-center justify-center py-3">{item.distance}</div>
-        <div className="flex items-center justify-center py-3">${item.travelTime}</div>
-        <div className="flex items-center justify-center py-3">{item.paymentBy}</div>
-        <div className="flex items-center justify-center py-3">{item.amount}</div>
-        <div className="flex items-center justify-center py-3">{322}</div>
-        <div className="flex items-center justify-center py-3">{item.status}</div>
+      <div className="grid items-center grid-cols-8 gap-2 px-2 my-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap">
+        <div className="flex items-center justify-center py-3">{item?.driverId?.name || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">{item?.userId.name || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">{item?.driverId.driverVehicles.vehiclesMake || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">{item?.driverId.driverLicense.licenseNumber || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">{item?.method || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">${item.amount || "N/A"}</div>
+        <div className="flex items-center justify-center py-3"> <Tooltip placement="top" title={item.transactionId || "N/A"} >{item.transactionId.slice(0, 10)}</Tooltip></div>
+
+
+
+        <div className="flex items-center justify-center py-3">{item.status || "N/A"}</div>
       </div>
 
       {/* Booking Details Modal */}

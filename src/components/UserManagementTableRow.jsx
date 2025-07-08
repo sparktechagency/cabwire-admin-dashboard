@@ -7,7 +7,7 @@ const UserManagementTableRow = ({ user, list }) => {
   const [switchModalVisible, setSwitchModalVisible] = useState(false);
   const [userDetailsModalVisible, setUserDetailsModalVisible] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(user.status); // Add local state
-  const [updateUserStatus , {isLoading}] = useUpdateUserStatusMutation();
+  const [updateUserStatus, { isLoading }] = useUpdateUserStatusMutation();
 
   const handleViewDetails = () => {
     setUserDetailsModalVisible(true);
@@ -58,7 +58,7 @@ const UserManagementTableRow = ({ user, list }) => {
         <div className="px-4 py-3 text-center">{user.phone || 'N/A'}</div>
         <div className="px-4 py-3 text-center">{formatDate(user.createdAt)}</div>
         <div className="py-3 text-center">{"N/A"}</div> {/* Booking info */}
-        <div className="py-3 text-center capitalize">{currentStatus}</div>
+        <div className={`flex items-center justify-center py-3 ${currentStatus === 'active' ? 'text-green-500' : 'text-red-500'}`}>{currentStatus}</div>
         <div className="flex items-center justify-between gap-2 border rounded border-primary px-5 ml-6 mr-6">
           <Button
             type="text"

@@ -2,13 +2,15 @@ import { EditOutlined, SaveOutlined } from "@ant-design/icons";
 import { Button, Input, Upload, message } from "antd";
 import { useEffect, useState } from "react";
 import { MdEdit } from "react-icons/md";
+import { useProfileQuery } from '../../features/profile/profileApi';
 import { useGetProfileSettingsQuery, useUpdateProfileSettingsMutation } from '../../features/settings/settingApi';
 import { baseURL } from '../../utils/BaseURL';
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [updateProfile, { isLoading: updateLoading }] = useUpdateProfileSettingsMutation();
-  const { data, isLoading, refetch } = useGetProfileSettingsQuery();
+  const { data, isLoading, } = useGetProfileSettingsQuery();
+  const { data: profiles, refetch } = useProfileQuery();
 
   // Initialize profile state
   const [profile, setProfile] = useState({
@@ -31,10 +33,14 @@ const Profile = () => {
         contact: data.data.contact || "", // Using contact field
       });
 
-      // Set profile image
-      setPreviewImage(
-        data.data.image || "https://i.ibb.co.com/fYrFP06M/images-1.png"
-      );
+      // Set profile image - only prepend baseURL if it's not already a full URL or data URL
+      const imageUrl = data.data.image
+        ? data.data.image.startsWith('http') || data.data.image.startsWith('data:image')
+          ? data.data.image
+          : `${baseURL}${data.data.image}`
+        : "https://i.ibb.co.com/fYrFP06M/images-1.png";
+
+      setPreviewImage(imageUrl);
     }
   }, [data]);
 
@@ -79,11 +85,11 @@ const Profile = () => {
     }
 
     try {
-      const result = await updateProfile(formData).unwrap();
-      console.log(result)
+      await updateProfile(formData).unwrap();
+
 
       // Refetch the user profile data to get the updated information
-      await refetch();
+      refetch();
 
       message.success("Profile updated successfully");
       setIsEditing(false);
@@ -102,9 +108,13 @@ const Profile = () => {
         email: data.data.email || "",
         contact: data.data.contact || "",
       });
-      setPreviewImage(
-        data.data.image || "https://i.ibb.co.com/fYrFP06M/images-1.png"
-      );
+      const imageUrl = data.data.image
+        ? data.data.image.startsWith('http') || data.data.image.startsWith('data:image')
+          ? data.data.image
+          : `${baseURL}${data.data.image}`
+        : "https://i.ibb.co.com/fYrFP06M/images-1.png";
+
+      setPreviewImage(imageUrl);
     }
     setProfileImageFile(null);
     setIsEditing(false);
@@ -126,7 +136,7 @@ const Profile = () => {
             <div className="w-[140px] h-[140px] rounded-full border-2 border-primary mx-auto flex flex-col items-center relative">
               <div className="w-full h-full rounded-full">
                 <img
-                  src={baseURL + previewImage}
+                  src={previewImage}
                   alt="Profile"
                   className="object-cover w-full h-full rounded-full"
                 />

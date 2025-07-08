@@ -1,19 +1,24 @@
-import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Modal, Switch } from "antd";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { Button, message, Modal, Switch } from "antd";
 import { useState } from "react";
-import DepartmentManagementFormModal from "./DepartmentManagementFormModal";
+import { useGetParticularCategoryQuery, useUpdateCategoryStatusMutation } from '../../features/category/categoryApi';
+
+import { baseURL } from '../../utils/BaseURL';
+import CategoryManagementFormModal from './CategoryManagementFormModal';
 import ViewDetailsModal from "./ViewDetailsModal";
 
-const CategoryManagementTableBody = ({ item, list }) => {
-  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+const CategoryManagementTableBody = ({ item, list, refetch }) => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [viewdetailsModalVisible, setViewdetailsModalVisible] = useState(false);
   const [switchModalVisible, setSwitchModalVisible] = useState(false);
-  const [switchStatus, setSwitchStatus] = useState(item.status === "Active");
+  const [localStatus, setLocalStatus] = useState(item.status);
 
-  const handleDelete = () => {
-    setRemoveModalVisible(true);
-  };
+  const [updateStatus] = useUpdateCategoryStatusMutation();
+
+  const { data: serviceResponse, isLoading } = useGetParticularCategoryQuery(item._id, {
+    skip: !viewdetailsModalVisible,
+  });
+
 
   const handleEdit = (value) => {
     setEditModalVisible(true);
@@ -27,26 +32,54 @@ const CategoryManagementTableBody = ({ item, list }) => {
     setSwitchModalVisible(true);
   };
 
-  const handleConfirmDelete = () => {
-    // Implement delete logic here
-    setRemoveModalVisible(false);
-  };
+  const handleConfirmSwitch = async () => {
+    try {
+      const newStatus = localStatus === 'active' ? 'block' : 'active';
 
-  const handleConfirmSwitch = () => {
-    // Implement switch logic here
-    setSwitchStatus(!switchStatus);
-    setSwitchModalVisible(false);
+      // Optimistically update local state
+      setLocalStatus(newStatus);
+
+      const response = await updateStatus({
+        id: item._id,
+        status: newStatus
+      }).unwrap();
+      if (response.success) {
+        message.success(`Category status updated to ${newStatus}`);
+        setSwitchModalVisible(false);
+        refetch();
+      }
+    } catch (error) {
+      // Revert if API call fails
+      setLocalStatus(item.status);
+      message.error("Failed to update status");
+      console.error("Failed to update status:", error);
+    }
   };
 
   return (
     <>
       {/* Table Row */}
-      <div className={`grid items-center grid-cols-5 gap-2 px-2 my-3 text-sm bg-gray-100 space-x-5 rounded-lg whitespace-nowrap`}>
+      <div className={`grid items-center grid-cols-8 gap-2 px-2 my-3 text-sm bg-gray-100 space-x-5 rounded-lg whitespace-nowrap`}>
         <div className="flex items-center justify-center py-3">{list}</div>
-        <div className="flex items-center justify-center py-3">{item.institution}</div>
-        <div className="flex items-center justify-center py-3">{item.name}</div>
+        <div className="flex items-center justify-center py-3">
+          {item.image ? (
+            <img
+              src={`${baseURL}${item.image}`}
+              alt={item.serviceName || item.name}
+              className="w-12 h-12 rounded-lg object-cover"
+            />
+          ) : (
+            <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+              <span className="text-xs text-gray-500">No Image</span>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center justify-center py-3">{item.categoryName}</div>
+        <div className="flex items-center justify-center py-3">{item.basePrice}</div>
+        <div className="flex items-center justify-center py-3">{item.ratePerKm}</div>
+        <div className="flex items-center justify-center py-3">{item.ratePerHour}</div>
         <div className="flex items-center justify-center py-3">{item.status}</div>
-        
+
         {/* Fixed Actions Column */}
         <div className="flex items-center justify-center py-3 ">
           <div className="flex items-center border border-primary rounded max-w-fit px-2">
@@ -62,14 +95,8 @@ const CategoryManagementTableBody = ({ item, list }) => {
               className="text-orange-500 hover:text-orange-600"
               onClick={handleEdit}
             />
-            <Button
-              type="text"
-              icon={<DeleteOutlined style={{ fontSize: "16px" }} />}
-              className="text-red-500 hover:text-red-600"
-              onClick={handleDelete}
-            />
             <Switch
-              checked={switchStatus}
+              checked={localStatus}
               size="small"
               className="ml-2"
               onChange={handleSwitchChange}
@@ -78,35 +105,6 @@ const CategoryManagementTableBody = ({ item, list }) => {
         </div>
       </div>
 
-
-      {/* Delete Confirmation Modal */}
-      <Modal
-        open={removeModalVisible}
-        onCancel={() => setRemoveModalVisible(false)}
-        footer={null}
-        closable={false}
-        width={350}
-        centered
-      >
-        <div className="text-center py-4">
-          <p className="text-base font-medium text-primary mb-6">Do you want to Turn Off This Category</p>
-          <div className="flex justify-center gap-4">
-            <Button
-              onClick={() => setRemoveModalVisible(false)}
-              className="px-8 border-primary text-primary"
-            >
-              No
-            </Button>
-            <Button
-              type="primary"
-              onClick={handleConfirmDelete}
-              className="px-8 bg-primary"
-            >
-              Yes
-            </Button>
-          </div>
-        </div>
-      </Modal>
 
       {/* Switch Confirmation Modal */}
       <Modal
@@ -138,7 +136,7 @@ const CategoryManagementTableBody = ({ item, list }) => {
       </Modal>
 
 
-        <ViewDetailsModal isOpen={viewdetailsModalVisible} onClose={() => setViewdetailsModalVisible(false)} modalTitle="Category"
+      <ViewDetailsModal isOpen={viewdetailsModalVisible} onClose={() => setViewdetailsModalVisible(false)} modalTitle="Category"
         imageAlt="Category"
         details={[
           { label: "Category Name", value: "Demo Category" },
@@ -146,7 +144,17 @@ const CategoryManagementTableBody = ({ item, list }) => {
           { label: "Rate Per Km ($)", value: "$45" },
         ]} />
 
-       <DepartmentManagementFormModal mode="edit" visible={editModalVisible} onCancel={() => setEditModalVisible(false)} />
+      <CategoryManagementFormModal mode="edit"
+        visible={editModalVisible}
+        onCancel={() => setEditModalVisible(false)}
+        initialValues={{
+          id: item._id,
+          categoryName: item.categoryName,
+          basePrice: item.basePrice,
+          ratePerKm: item.ratePerKm,
+          ratePerHour: item.ratePerHour,
+          image: item.image
+        }} />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import { Button, Card, Dropdown, Input, message, Radio } from "antd";
+import { Button, Card, Dropdown, Input, message, Radio, Spin } from "antd";
 import { useEffect, useState } from "react";
 import {
   useUpdateRevenueMutation,
@@ -169,7 +169,7 @@ const ParkingManagementTableRow = ({ item, list }) => {
                     statusName === "Blocked" ? "bg-red-600" : "bg-primary"
                   }`}
                 >
-                  <span>{statusLoading ? "Loading..." : statusName||"Active"}</span>
+                  <span>{statusLoading ? <Spin size='small' /> : statusName||"Active"}</span>
                   {dropdownOpen ? (
                     <BiChevronUp size={20} className="ml-2" />
                   ) : (

@@ -1,7 +1,8 @@
 import { UploadOutlined } from '@ant-design/icons';
 import { Button, Form, Image, Input, message, Modal, Upload } from 'antd';
 import { useEffect, useState } from 'react';
-import { useCreateServiceMutation, useUpdateServiceMutation } from '../../features/service/serviceApi';
+
+import { useCreateCategoryMutation, useEditCategoryMutation } from '../../features/category/categoryApi';
 import { baseURL } from '../../utils/BaseURL';
 
 const ServicesManagementModal = ({
@@ -9,14 +10,15 @@ const ServicesManagementModal = ({
   visible,
   onCancel,
   onSubmit,
-  initialValues = {}
+  initialValues = {},
+  loading
 }) => {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
   const [fileList, setFileList] = useState([]);
 
-  const [createService] = useCreateServiceMutation();
-  const [updateService] = useUpdateServiceMutation();
+  const [createService] = useCreateCategoryMutation();
+  const [updateService] = useEditCategoryMutation();
 
   useEffect(() => {
     if (initialValues.image) {
@@ -35,8 +37,10 @@ const ServicesManagementModal = ({
       const value = await form.validateFields();
       const formdata = new FormData();
       const data = {
-        serviceName: value.name,
-        baseFare: value.baseFare,
+        categoryName: value.categoryName,
+        basePrice: parseFloat(value.basePrice),
+        ratePerKm: parseFloat(value.ratePerKm),
+        ratePerHour: parseFloat(value.ratePerHour),
       }
       formdata.append("data", JSON.stringify(data));
 
@@ -120,6 +124,7 @@ const ServicesManagementModal = ({
         Cancel
       </Button>
       <Button
+        loading={loading}
         type="primary"
         style={{ paddingLeft: "40px", paddingRight: "40px", fontSize: "16px" }}
         onClick={handleSubmit}
@@ -147,20 +152,38 @@ const ServicesManagementModal = ({
         initialValues={initialValues}
       >
         <Form.Item
-          name="name"
+          name="categoryName"
           label={<span style={{ fontWeight: "bold" }}>Service Name</span>}
           rules={[{ required: true, message: 'Please input service name!' }]}
         >
-          <Input placeholder="Enter service name" />
+          <Input type='text' placeholder="Enter service name" />
         </Form.Item>
 
         <Form.Item
-          name="baseFare"
+          name="basePrice"
           label={<span style={{ fontWeight: "bold" }}>Base Fare ($)</span>}
           rules={[{ required: true, message: 'Please input base fare!' }]}
         >
           <Input type="number" placeholder="Enter base fare" />
         </Form.Item>
+
+        <Form.Item
+          name="ratePerKm"
+          label={<span style={{ fontWeight: "bold" }}>Base Fare ($)</span>}
+          rules={[{ required: true, message: 'Please input base fare!' }]}
+        >
+          <Input type="number" placeholder="Enter base fare" />
+        </Form.Item>
+
+
+        <Form.Item
+          name="ratePerHour"
+          label={<span style={{ fontWeight: "bold" }}>Base Fare ($)</span>}
+          rules={[{ required: true, message: 'Please input base fare!' }]}
+        >
+          <Input type="number" placeholder="Enter base fare" />
+        </Form.Item>
+
 
         <Form.Item
           name="image"

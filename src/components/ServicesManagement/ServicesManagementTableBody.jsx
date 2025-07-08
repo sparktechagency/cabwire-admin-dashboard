@@ -1,5 +1,5 @@
 import { EditOutlined, EyeOutlined } from "@ant-design/icons";
-import { Button, Modal, Switch } from "antd";
+import { Button, Modal, Switch, message } from "antd";
 import { useState } from "react";
 
 import { useDeleteServiceMutation, useGetParticularServiceQuery, useUpdateServiceStatusMutation } from '../../features/service/serviceApi';
@@ -7,21 +7,15 @@ import { baseURL } from '../../utils/BaseURL';
 import ServicesManagementModal from "./ServicesManagementModal";
 import ServicesViewDetailsModal from "./ServicesViewDetailsModal";
 
-const ServicesManagementTableBody = ({ item, list }) => {
-  const [removeModalVisible, setRemoveModalVisible] = useState(false);
+const ServicesManagementTableBody = ({ item, list, refetch }) => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [viewdetailsModalVisible, setViewdetailsModalVisible] = useState(false);
   const [switchModalVisible, setSwitchModalVisible] = useState(false);
-
-  const [deleteService] = useDeleteServiceMutation();
+  const [localStatus, setLocalStatus] = useState(item.status); // Local state for immediate feedback
   const [updateStatus] = useUpdateServiceStatusMutation();
-  const { data: serviceDetails } = useGetParticularServiceQuery(item.id, {
+  const { data: serviceResponse, isLoading } = useGetParticularServiceQuery(item._id, {
     skip: !viewdetailsModalVisible,
   });
-
-  const handleDelete = () => {
-    setRemoveModalVisible(true);
-  };
 
   const handleEdit = () => {
     setEditModalVisible(true);
@@ -35,25 +29,27 @@ const ServicesManagementTableBody = ({ item, list }) => {
     setSwitchModalVisible(true);
   };
 
-  const handleConfirmDelete = async () => {
-    try {
-      await deleteService(item.id).unwrap();
-      setRemoveModalVisible(false);
-    } catch (error) {
-      console.error("Failed to delete service:", error);
-    }
-  };
-
   const handleConfirmSwitch = async () => {
     try {
-      const newStatus = item.status === 'active' ? 'block' : 'active';
-      const response = await updateStatus({ id: item._id, status: newStatus }).unwrap();
+      const newStatus = localStatus === 'active' ? 'block' : 'active';
 
-      console.log(response)
+      // Optimistically update local state
+      setLocalStatus(newStatus);
 
+      const response = await updateStatus({
+        id: item._id,
+        status: newStatus
+      }).unwrap();
+      if (response.success) {
+        message.success(`Service status updated to ${newStatus}`);
+        setSwitchModalVisible(false);
+        refetch();
 
-      setSwitchModalVisible(false);
+      }
     } catch (error) {
+      // Revert if API call fails
+      setLocalStatus(item.status);
+      message.error("Failed to update status"); 
       console.error("Failed to update status:", error);
     }
   };
@@ -79,7 +75,7 @@ const ServicesManagementTableBody = ({ item, list }) => {
         </div>
         <div className="flex items-center justify-center py-3">{item.serviceName}</div>
         <div className="flex items-center justify-center py-3">${item.baseFare}</div>
-        <div className="flex items-center justify-center py-3">{item.status}</div>
+        <div className="flex items-center justify-center py-3">{localStatus}</div>
 
         {/* Actions Column */}
         <div className="flex items-center justify-center py-3 ">
@@ -96,14 +92,8 @@ const ServicesManagementTableBody = ({ item, list }) => {
               className="text-orange-500 hover:text-orange-600"
               onClick={handleEdit}
             />
-            {/* <Button
-              type="text"
-              icon={<DeleteOutlined style={{ fontSize: "16px" }} />}
-              className="text-red-500 hover:text-red-600"
-              onClick={handleDelete}
-            /> */}
             <Switch
-              checked={item.status === 'Active'}
+              checked={localStatus === 'active'}
               size="small"
               className="ml-2"
               onChange={handleSwitchChange}
@@ -111,35 +101,6 @@ const ServicesManagementTableBody = ({ item, list }) => {
           </div>
         </div>
       </div>
-
-      {/* Delete Confirmation Modal */}
-      <Modal
-        open={removeModalVisible}
-        onCancel={() => setRemoveModalVisible(false)}
-        footer={null}
-        closable={false}
-        width={350}
-        centered
-      >
-        <div className="text-center py-4">
-          <p className="text-base font-medium text-primary mb-6">Are you sure you want to delete this service?</p>
-          <div className="flex justify-center gap-4">
-            <Button
-              onClick={() => setRemoveModalVisible(false)}
-              className="px-8 border-primary text-primary"
-            >
-              No
-            </Button>
-            <Button
-              type="primary"
-              onClick={handleConfirmDelete}
-              className="px-8 bg-primary"
-            >
-              Yes
-            </Button>
-          </div>
-        </div>
-      </Modal>
 
       {/* Switch Confirmation Modal */}
       <Modal
@@ -152,7 +113,7 @@ const ServicesManagementTableBody = ({ item, list }) => {
       >
         <div className="text-center py-4">
           <p className="text-lg font-medium mb-6">
-            {`Do you want to ${item.status === 'Active' ? 'deactivate' : 'activate'} this service?`}
+            {`Do you want to ${localStatus === 'active' ? 'deactivate' : 'activate'} this service?`}
           </p>
           <div className="flex justify-center gap-4">
             <Button
@@ -165,6 +126,7 @@ const ServicesManagementTableBody = ({ item, list }) => {
               type="primary"
               onClick={handleConfirmSwitch}
               className="px-8 bg-primary"
+              loading={isLoading}
             >
               Yes
             </Button>
@@ -173,16 +135,15 @@ const ServicesManagementTableBody = ({ item, list }) => {
       </Modal>
 
       {/* View Details Modal */}
-      {serviceDetails && (
+      {viewdetailsModalVisible && serviceResponse?.data && (
         <ServicesViewDetailsModal
           isOpen={viewdetailsModalVisible}
           onClose={() => setViewdetailsModalVisible(false)}
           modalTitle="Service Details"
           details={[
-            { label: "Service Name", value: serviceDetails.name },
-            { label: "Base Price", value: `$${serviceDetails.baseFare}` },
-            { label: "Rate Per Km", value: `$${serviceDetails.ratePerKm}` },
-            { label: "Status", value: serviceDetails.status },
+            { label: "Service Name", value: serviceResponse.data.serviceName },
+            { label: "Base Price", value: `$${serviceResponse.data.baseFare}` },
+            { label: "Status", value: serviceResponse.data.status },
           ]}
         />
       )}

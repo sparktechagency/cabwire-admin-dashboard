@@ -1,8 +1,8 @@
-import { Card, Dropdown, message, Radio } from "antd";
+import { Card, Dropdown, message, Radio, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { useUpdateOfferStatusMutation } from "../features/bussinessManagement/bussinessApi";
 
-const OfferReviewTableRow = ({ item , num }) => {
+const OfferReviewTableRow = ({ item, num }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [updateOfferStatus, { isLoading: isLoadingStatus }] =
     useUpdateOfferStatusMutation();
@@ -70,11 +70,10 @@ const OfferReviewTableRow = ({ item , num }) => {
         >
           <div className="py-1 transition duration-200 border border-red-500 rounded hover:bg-gray-100">
             <button
-              className={`w-[180px] p-2.5 text-white rounded ${
-                statusName === "blocked" ? "bg-red-600" : "bg-primary"
-              }`}
+              className={`w-[180px] p-2.5 text-white rounded ${statusName === "blocked" ? "bg-red-600" : "bg-primary"
+                }`}
             >
-              {isLoadingStatus ? "Loading..." : statusName}{" "}
+              {isLoadingStatus ? <Spin size='small' /> : statusName}{" "}
               {/* Use statusName here */}
             </button>
           </div>

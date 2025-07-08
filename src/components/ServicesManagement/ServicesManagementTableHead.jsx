@@ -1,6 +1,7 @@
+import { Spin } from 'antd';
 import ServicesManagementTableBody from "./ServicesManagementTableBody";
 
-const ServicesManagementTableHead = ({ columns, data, loading }) => {
+const ServicesManagementTableHead = ({ columns, data, loading , refetch }) => {
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[1200px] w-full bg-transparent rounded-lg shadow-md space-y-3">
@@ -16,10 +17,10 @@ const ServicesManagementTableHead = ({ columns, data, loading }) => {
         {/* Table Body */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
           {loading ? (
-            <h3 className="py-10 text-center">Loading...</h3>
+            <h3 className="py-10 text-center"><Spin size='small'/></h3>
           ) : data.length > 0 ? (
             data.map((item, index) => (
-              <ServicesManagementTableBody item={item} key={item._id} list={index + 1} />
+              <ServicesManagementTableBody item={item} key={item._id} list={index + 1} refetch={refetch} />
             ))
           ) : (
             <h3 className="py-10 text-center">No Data Available</h3>

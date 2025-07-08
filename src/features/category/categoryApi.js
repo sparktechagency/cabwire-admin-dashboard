@@ -1,10 +1,19 @@
 import { baseApi } from "../../apiBaseQuery";
+import { useGetParticularServiceQuery } from '../service/serviceApi';
 
 export const categoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCategory: builder.query({
       query: () => "/category",
       providesTags: [],
+    }),
+
+    getParticularCategory: builder.query({
+      query: (id) => ({
+        url: `/category/${id}`,
+        method: "GET",
+      }),
+      providesTags: [''],
     }),
 
     createCategory: builder.mutation({
@@ -41,5 +50,6 @@ export const {
   useGetCategoryQuery,
   useCreateCategoryMutation,
   useEditCategoryMutation,
-  useUpdateCategoryStatusMutation
+  useUpdateCategoryStatusMutation, 
+  useGetParticularCategoryQuery
 } = categoryApi;

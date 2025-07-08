@@ -33,8 +33,7 @@ const NotificationPopup = () => {
   useEffect(() => {
     socketRef.current = io(baseURL);
 
-    socketRef.current.on("connect", () => {
-    });
+    socketRef.current.on("connect", () => { });
 
     const handleNewNotification = (notification) => {
       refetch();
@@ -82,11 +81,21 @@ const NotificationPopup = () => {
         navigate("/order");
       } else if (path.pathname === "/earning") {
         navigate("/earning");
+      } else {
+        // Remove search query when input is cleared
+        const url = new URL(window.location);
+        url.searchParams.delete("search");
+        navigate(url.pathname + url.search);
       }
     } else {
       if (path.pathname === "/user-management") {
         navigate(`/user-management?search=${searchQuery}`);
-      } else if (path.pathname === "/earning") {
+      }
+      else if (path.pathname === "/driver-management") {
+        navigate(`/driver-management?search=${searchQuery}`);
+      }
+
+      else if (path.pathname === "/earning") {
         navigate(`/earning?search=${searchQuery}`);
       }
     }
@@ -103,7 +112,6 @@ const NotificationPopup = () => {
     }
   };
 
-  // Function to handle See Details button click
   const handleSeeDetailsClick = () => {
     setVisible(false); // Close the modal
     navigate("/notification"); // Navigate to notification settings
@@ -141,10 +149,9 @@ const NotificationPopup = () => {
     }
   };
 
-
   const getNotification = [
-
-  ]
+    // Your notifications go here
+  ];
 
   return (
     <div className="flex items-center justify-between">
@@ -181,9 +188,9 @@ const NotificationPopup = () => {
           />
         </div>
 
-        <Badge count={unreadCount} className="ml-3 cursor-pointer" onClick={() => setVisible(!visible)} ref={iconRef}>
+        {/* <Badge count={unreadCount} className="ml-3 cursor-pointer" onClick={() => setVisible(!visible)} ref={iconRef}>
           <BellOutlined className="text-2xl text-gray-600 transition duration-300 hover:text-gray-800" />
-        </Badge>
+        </Badge> */}
 
         {visible && (
           <motion.div
@@ -207,13 +214,12 @@ const NotificationPopup = () => {
             >
               <div className="overflow-y-auto cursor-pointer max-h-96 custom-scrollbar">
                 {getNotification.length === 0 ? (
-                  <div className="text-center  text-gray-500">
+                  <div className="text-center text-gray-500">
                     <div className="flex justify-center">
                       <img
                         src={"/images/notification.png"}
                         width={200}
                         height={200}
-
                         alt="Notification Icon"
                       />
                     </div>
@@ -228,7 +234,6 @@ const NotificationPopup = () => {
                       type="primary"
                       className="w-full"
                       size="middle"
-
                     >
                       See details
                     </Button>

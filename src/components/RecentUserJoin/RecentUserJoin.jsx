@@ -3,11 +3,10 @@ import RecentUserJoinTableHead from "./RecentUserJoinTableHead";
 
 const columns = [
   "SL",
-  "userName",
+  "UserName",
   "Email",
   "Phone Number",
   "Joining Date",
-  "booking",
   "Status",
 ];
 

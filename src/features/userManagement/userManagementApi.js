@@ -3,10 +3,15 @@ import { baseApi } from "../../apiBaseQuery";
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getUserManagement: builder.query({
-      query: (page) => `/user/all-users?page=${page}`,
+      query: ({ page = 1, searchValue = '' }) => ({
+        url: `/user/all-users`,
+        params: {
+          page,
+          searchTerm: searchValue
+        }
+      }),
       providesTags: [],
     }),
-
     updateUserStatus: builder.mutation({
       query: (data) => ({
         url: `/user/block-user/${data.id}`, // Updated endpoint

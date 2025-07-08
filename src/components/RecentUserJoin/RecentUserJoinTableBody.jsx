@@ -35,14 +35,13 @@ const RecentUserJoinTableBody = ({ item, list }) => {
   return (
     <>
       {/* Table Row with Improved Alignment */}
-      <div className="grid items-center grid-cols-7  gap-2 px-2 my-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap">
+      <div className="grid items-center grid-cols-6  gap-2 px-2 my-3 text-sm bg-gray-100 rounded-lg whitespace-nowrap">
         <div className="flex items-center justify-center py-3">{list}</div>
-        <div className="flex items-center justify-center py-3">{item.userName}</div>
-        <div className="flex items-center justify-center py-3">{item.email}</div>
-        <div className="flex items-center justify-center py-3">{item.phoneNumber}</div>
-        <div className="flex items-center justify-center py-3">{item.joiningDate}</div>
-        <div className="flex items-center justify-center py-3">{item.booking}</div>
-        <div className="flex items-center justify-center py-3">{item.status}</div>
+        <div className="flex items-center justify-center py-3">{item?.userName || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">{item?.email || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">{item?.contact || "N/A"}</div>
+        <div className="flex items-center justify-center py-3">{item?.createdAt || "N/A"}</div>
+        <div className={`flex items-center justify-center py-3 ${item.status === 'active' ? 'text-green-500' : 'text-red-500'}`}>{item.status || "N/A"}</div>
       </div>
 
       {/* Booking Details Modal */}

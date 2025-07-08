@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, message, Spin } from "antd";
 import JoditEditor from "jodit-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,6 @@ const TermsConditions = () => {
       setContent(parsedContent);
       setIsContentLoaded(true);
 
-      console.log("Loaded content:", parsedContent); // Debug log
     } else if (!termsLoading) {
       // If no data and not loading, mark as loaded with empty content
       setIsContentLoaded(true);
@@ -87,7 +86,7 @@ const TermsConditions = () => {
     return (
       <section className="border p-4 rounded-lg mt-10 shadow">
         <div className="py-3 rounded">
-          <h3 className="text-xl font-medium text-primary pb-5">Loading...</h3>
+          <h3 className="text-xl font-medium text-primary pb-5"><Spin size='small' /></h3>
         </div>
       </section>
     );

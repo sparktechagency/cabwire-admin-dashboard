@@ -56,12 +56,10 @@ const DriverManagementTableBody = ({ driver, list }) => {
         <div className="py-3 text-center">{list}</div>
         <div className="px-3 py-3 text-center">{driver?.name}</div>
         <div className="px-3 py-3 text-center">{driver.email}</div>
-        <div className="px-4 py-3 text-center">
-          {driver.driverVehicles?.vehiclesMake || 'N/A'}
-        </div>
-        <div className="px-4 py-3 text-center">{driver.phone || 'N/A'}</div>
-        <div className="px-4 py-3 text-center">{formatCurrency(50000)}</div> {/* Mock total earn */}
-        <div className="py-3 text-center">{formatCurrency(3000)}</div> {/* Mock admin revenue */}
+        <div className="px-4 py-3 text-center">{driver.contact || 'N/A'}</div>
+        <div className="px-4 py-3 text-center">{driver?.driverVehicles?.vehiclesMake || 'N/A'}</div>
+        <div className="px-4 py-3 text-center">{driver?.driverTotalEarn || 'N/A'}</div>
+        <div className="px-4 py-3 text-center">{driver?.driverLicense?.licenseNumber || 'N/A'}</div>
         <div className={`py-3 text-center capitalize ${currentStatus === 'active' ? 'text-green-600' : 'text-red-600'}`}>
           {currentStatus}
         </div>

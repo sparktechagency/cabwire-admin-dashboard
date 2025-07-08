@@ -7,14 +7,15 @@ import ServicesManagementTableHead from './ServicesManagementTableHead';
 
 function ServicesManagement() {
   const [isNewServiceModalVisible, setIsNewServiceModalVisible] = useState(false);
-  const { data: services = [], isLoading, isError } = useGetAllServicesQuery();
+  const { data: services = [], isLoading, isError, refetch } = useGetAllServicesQuery();
+
 
 
   const handleCreateService = async (values) => {
     setIsNewServiceModalVisible(false);
   };
 
-  const departmentColumns = [
+  const servicesColumns = [
     "SL",
     "Service Picture",
     "Category Name",
@@ -24,9 +25,6 @@ function ServicesManagement() {
   ];
 
 
-
-
-  const result = [];
 
   return (
     <div className="p-6 bg-gray-50">
@@ -41,8 +39,9 @@ function ServicesManagement() {
 
       <ServicesManagementTableHead
         data={services?.data}
-        columns={departmentColumns}
+        columns={servicesColumns}
         loading={isLoading}
+        refetch={refetch}
       />
 
       <ServicesManagementModal

@@ -7,7 +7,8 @@ const Revenue = lazy(() => import("../../components/dashboard/Revenue"));
 
 import { Skeleton } from "antd";
 import AdminStatistics from "../../components/dashboard/AdminStatistics";
-import RecentDriverJoin from "../../components/RecentDriverJoin/RecentDriverJoin";
+
+import RecentDriverJoin from '../../components/RecentDriverJoin/RecentDriverJoin';
 import RecentUserJoin from "../../components/RecentUserJoin/RecentUserJoin";
 
 const Dashboard = () => {
