@@ -29,6 +29,7 @@ import RequestTable from "./components/DriverManagement/RequestTable";
 import ProtectedRoute from './components/ProtectedRoute';
 import ServicesManagement from "./components/ServicesManagement/ServicesManagement";
 import Earning from "./pages/earning/Earning";
+import DeletePage from './components/delete-page/DeletePage';
 
 const Routers = () => {
   return (
@@ -41,6 +42,7 @@ const Routers = () => {
         <Route path="/auth/login/forgot_password" element={<ForgotPassword />} />
         <Route path="/auth/login/check_email" element={<CheckEmail />} />
         <Route path="/auth/login/set_password" element={<SetPassword />} />
+        <Route path="/delete-account" element={<DeletePage />} />
 
         {/* Protected Routes inside layout */}
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
@@ -65,6 +67,7 @@ const Routers = () => {
           <Route path="notification" element={<Notification />} />
           <Route path="privacy-policy" element={<PrivacyPolicy />} />
           <Route path="terms-conditions" element={<TermsConditions />} />
+         
         </Route>
 
         {/* 404 fallback */}

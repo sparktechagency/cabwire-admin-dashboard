@@ -87,6 +87,7 @@ const Sidebar = () => {
               location.pathname.startsWith("/offer/") && item.link === "/offer";
             const isExactMatch = location.pathname === item.link;
             const isSettingsActive = location.pathname.startsWith("/settings");
+            const isDeleteActive = location.pathname.startsWith("/delete-account");
 
             const isActive =
               isShopActive ||
