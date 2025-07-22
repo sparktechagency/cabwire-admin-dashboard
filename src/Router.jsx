@@ -12,7 +12,7 @@ import Verify from "./pages/auth/Verify_user";
 import Dashboard from "./pages/dashboard/Dashboard";
 import NotFound from "./pages/NotFound";
 import Notification from "./pages/Notification";
-import PrivacyPolicy from "./pages/privacyPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsConditions from "./pages/TermsConditions";
 import UserProfile from "./pages/UserProfile";
 
