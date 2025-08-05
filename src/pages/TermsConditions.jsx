@@ -85,7 +85,7 @@ const TermsConditions = () => {
   if (termsLoading || !isContentLoaded) {
     return (
       <section className="border p-4 rounded-lg mt-10 shadow">
-        <div className="py-3 rounded">
+        <div className="py-3 rounded flex justify-center items-center">
           <h3 className="text-xl font-medium text-primary pb-5"><Spin size='small' /></h3>
         </div>
       </section>

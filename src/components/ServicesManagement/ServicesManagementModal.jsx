@@ -15,8 +15,8 @@ const ServicesManagementModal = ({
   const [imageUrl, setImageUrl] = useState(null);
   const [fileList, setFileList] = useState([]);
 
-  const [createService] = useCreateServiceMutation();
-  const [updateService] = useUpdateServiceMutation();
+  const [createService, { isLoading: createLoading }] = useCreateServiceMutation();
+  const [updateService, { isLoading: updatingLoading }] = useUpdateServiceMutation();
 
   useEffect(() => {
     if (initialValues.image) {
@@ -120,6 +120,7 @@ const ServicesManagementModal = ({
         Cancel
       </Button>
       <Button
+        loading={mode === 'create' ? createLoading : updatingLoading}
         type="primary"
         style={{ paddingLeft: "40px", paddingRight: "40px", fontSize: "16px" }}
         onClick={handleSubmit}

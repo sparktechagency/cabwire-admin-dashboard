@@ -1,11 +1,10 @@
 import { baseApi } from "../../apiBaseQuery";
-import { useGetParticularServiceQuery } from '../service/serviceApi';
 
 export const categoryApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCategory: builder.query({
       query: () => "/category",
-      providesTags: [],
+      providesTags: ["category"],
     }),
 
     getParticularCategory: builder.query({
@@ -13,7 +12,7 @@ export const categoryApi = baseApi.injectEndpoints({
         url: `/category/${id}`,
         method: "GET",
       }),
-      providesTags: [''],
+      providesTags: ["category"],
     }),
 
     createCategory: builder.mutation({
@@ -22,7 +21,7 @@ export const categoryApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: [],
+      invalidatesTags: ["category"],
     }),
 
     editCategory: builder.mutation({
@@ -31,7 +30,7 @@ export const categoryApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: [],
+      invalidatesTags: ["category"],
     }),
 
     updateCategoryStatus: builder.mutation({
@@ -40,7 +39,7 @@ export const categoryApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: [],
+      invalidatesTags: ["category"],
     }),
 
   }),
@@ -50,6 +49,6 @@ export const {
   useGetCategoryQuery,
   useCreateCategoryMutation,
   useEditCategoryMutation,
-  useUpdateCategoryStatusMutation, 
+  useUpdateCategoryStatusMutation,
   useGetParticularCategoryQuery
 } = categoryApi;

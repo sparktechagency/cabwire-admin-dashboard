@@ -17,8 +17,8 @@ const ServicesManagementModal = ({
   const [imageUrl, setImageUrl] = useState(null);
   const [fileList, setFileList] = useState([]);
 
-  const [createService] = useCreateCategoryMutation();
-  const [updateService] = useEditCategoryMutation();
+  const [createCategory , {isLoading:createCategoryLoading}] = useCreateCategoryMutation();
+  const [updateCategory , {isLoading:updateCategoryLoading}] = useEditCategoryMutation();
 
   useEffect(() => {
     if (initialValues.image) {
@@ -54,11 +54,11 @@ const ServicesManagementModal = ({
       }
 
       if (mode === 'create') {
-        const response = await createService(formdata).unwrap();
+        const response = await createCategory(formdata).unwrap();
         console.log(response)
         message.success('Service created successfully');
       } else {
-        await updateService({ id: initialValues.id, data: formdata }).unwrap();
+        await updateCategory({ id: initialValues.id, data: formdata }).unwrap();
         message.success('Service updated successfully');
       }
 
@@ -124,7 +124,7 @@ const ServicesManagementModal = ({
         Cancel
       </Button>
       <Button
-        loading={loading}
+        loading={ mode === 'create' ? createCategoryLoading : updateCategoryLoading}
         type="primary"
         style={{ paddingLeft: "40px", paddingRight: "40px", fontSize: "16px" }}
         onClick={handleSubmit}

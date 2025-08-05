@@ -15,5 +15,5 @@ export const baseApi = createApi({
     },
   }),
   endpoints: () => ({}),
-  tagTypes: ["driverManagement"],
+  tagTypes: ["driverManagement", "category", "service", "user", "booking", "notification", "settings"],
 });

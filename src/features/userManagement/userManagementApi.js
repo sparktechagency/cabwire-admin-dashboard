@@ -10,7 +10,7 @@ export const userApi = baseApi.injectEndpoints({
           searchTerm: searchValue
         }
       }),
-      providesTags: [],
+      providesTags: ["user"],
     }),
     updateUserStatus: builder.mutation({
       query: (data) => ({
@@ -20,7 +20,7 @@ export const userApi = baseApi.injectEndpoints({
     "status": "active"
 } */
       }),
-      invalidatesTags: [],
+      invalidatesTags: ["user"],
     }),
   }),
 });

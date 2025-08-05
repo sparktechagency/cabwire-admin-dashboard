@@ -8,7 +8,7 @@ export const serviceApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
-      invalidatesTags: ['Services'],
+      invalidatesTags: ['service'],
     }),
 
     updateService: builder.mutation({
@@ -17,7 +17,7 @@ export const serviceApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: data,
       }),
-      invalidatesTags: ['Services'],
+      invalidatesTags: ['service'],
     }),
 
     updateServiceStatus: builder.mutation({
@@ -26,7 +26,7 @@ export const serviceApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: { status },
       }),
-      invalidatesTags: ['Services'],
+      invalidatesTags: ['service'],
     }),
 
     getParticularService: builder.query({
@@ -34,7 +34,7 @@ export const serviceApi = baseApi.injectEndpoints({
         url: `/service/${id}`,
         method: "GET",
       }),
-      providesTags: ['Service'],
+      providesTags: ['service'],
     }),
 
     getAllServices: builder.query({
@@ -42,7 +42,7 @@ export const serviceApi = baseApi.injectEndpoints({
         url: `/service`,
         method: "GET",
       }),
-      providesTags: ['Services'],
+      providesTags: ['service'],
     }),
 
     deleteService: builder.mutation({
@@ -50,7 +50,7 @@ export const serviceApi = baseApi.injectEndpoints({
         url: `/service/${id}`,
         method: "DELETE",
       }),
-      invalidatesTags: ['Services'],
+      invalidatesTags: ['service'],
     }),
   }),
 });

@@ -14,8 +14,6 @@ function CategoryManagement() {
   const [isNewCategoryModalVisible, setIsNewCategoryModalVisible] = useState(false);
   const { data: category = [], isLoading, isError, refetch } = useGetCategoryQuery();
 
-  console.log(category.data)
-
   const handleCreateService = async (values) => {
     setIsNewServiceModalVisible(false);
   };

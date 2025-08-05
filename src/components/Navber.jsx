@@ -1,5 +1,5 @@
-import { BellOutlined, CheckCircleOutlined } from "@ant-design/icons";
-import { Avatar, Badge, Button, Card, Input, Tag } from "antd";
+import { CheckCircleOutlined } from "@ant-design/icons";
+import { Avatar, Button, Card, Input, Tag } from "antd";
 import { motion } from "framer-motion";
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +12,7 @@ import {
 } from "../features/notification/notification";
 import { useProfileQuery } from "../features/profile/profileApi";
 import { baseURL } from "../utils/BaseURL";
+import { getImageUrl } from '../utils/getImageUrl';
 
 const NotificationPopup = () => {
   const path = useLocation();
@@ -22,7 +23,9 @@ const NotificationPopup = () => {
   const popupRef = useRef(null);
   const iconRef = useRef(null);
 
-  const { data: profile } = useProfileQuery();
+  const { data: profile, isLoading: profileLoading } = useProfileQuery();
+  console.log("Profile Data:", profile?.data?.image);
+
   const { data: notifications, refetch, isLoading } = useGetNotificationQuery(undefined, {
     refetchOnFocus: true,
     refetchOnReconnect: true,
@@ -175,18 +178,22 @@ const NotificationPopup = () => {
       )}
 
       <div className="relative z-40 flex items-center justify-end gap-5 px-5">
-        <div
-          onClick={() => navigate("/settings")}
-          className="cursor-pointer"
-        >
-          <span className="mr-2 text-gray-700">
-            Hello, <b>{profile?.data?.name || "Hello, Sabbir"}</b>
-          </span>
-          <Avatar
-            src={profile?.data?.image ? `${baseURL}${profile?.data?.image}` : `${"https://i.ibb.co.com/QF3711qv/Frame-2147226793.png"}`}
-            size={30}
-          />
-        </div>
+        {
+          !profileLoading && profile && (
+            <div
+              onClick={() => navigate("/settings")}
+              className="cursor-pointer"
+            >
+              <span className="mr-2 text-gray-700">
+                Hello, <b>{profile?.data?.name || "Hello, Sabbir"}</b>
+              </span>
+              <Avatar
+                src={profile?.data?.image && getImageUrl(profile?.data?.image)}
+                size={30}
+              />
+            </div>
+          )
+        }
 
         {/* <Badge count={unreadCount} className="ml-3 cursor-pointer" onClick={() => setVisible(!visible)} ref={iconRef}>
           <BellOutlined className="text-2xl text-gray-600 transition duration-300 hover:text-gray-800" />
