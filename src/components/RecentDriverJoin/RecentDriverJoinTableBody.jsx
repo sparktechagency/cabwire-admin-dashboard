@@ -42,7 +42,7 @@ const RecentDriverJoinTableBody = ({ item, list }) => {
         <div className="flex items-center justify-center py-3">{item.phoneNumber}</div>
         <div className="flex items-center justify-center py-3">{item.carMake}</div>
         <div className="flex items-center justify-center py-3">{item.carModel}</div>
-        <div className="flex items-center justify-center py-3">${item.licenseNumber}</div>
+        <div className="flex items-center justify-center py-3">{item.licenseNumber}</div>
         <div className={`flex items-center justify-center py-3 ${item.status === 'active' ? 'text-green-500' : 'text-red-500'}`}>{item.status}</div>
       </div>
 
