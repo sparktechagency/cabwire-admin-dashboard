@@ -17,8 +17,8 @@ const ServicesManagementModal = ({
   const [imageUrl, setImageUrl] = useState(null);
   const [fileList, setFileList] = useState([]);
 
-  const [createCategory , {isLoading:createCategoryLoading}] = useCreateCategoryMutation();
-  const [updateCategory , {isLoading:updateCategoryLoading}] = useEditCategoryMutation();
+  const [createCategory, { isLoading: createCategoryLoading }] = useCreateCategoryMutation();
+  const [updateCategory, { isLoading: updateCategoryLoading }] = useEditCategoryMutation();
 
   useEffect(() => {
     if (initialValues.image) {
@@ -124,7 +124,7 @@ const ServicesManagementModal = ({
         Cancel
       </Button>
       <Button
-        loading={ mode === 'create' ? createCategoryLoading : updateCategoryLoading}
+        loading={mode === 'create' ? createCategoryLoading : updateCategoryLoading}
         type="primary"
         style={{ paddingLeft: "40px", paddingRight: "40px", fontSize: "16px" }}
         onClick={handleSubmit}
@@ -169,19 +169,19 @@ const ServicesManagementModal = ({
 
         <Form.Item
           name="ratePerKm"
-          label={<span style={{ fontWeight: "bold" }}>Base Fare ($)</span>}
-          rules={[{ required: true, message: 'Please input base fare!' }]}
+          label={<span style={{ fontWeight: "bold" }}>rate Per Km</span>}
+          rules={[{ required: true, message: 'Please input rate Per Km!' }]}
         >
-          <Input type="number" placeholder="Enter base fare" />
+          <Input type="number" placeholder="Enter rate Per Km" />
         </Form.Item>
 
 
         <Form.Item
           name="ratePerHour"
-          label={<span style={{ fontWeight: "bold" }}>Base Fare ($)</span>}
-          rules={[{ required: true, message: 'Please input base fare!' }]}
+          label={<span style={{ fontWeight: "bold" }}>rate Per Hour</span>}
+          rules={[{ required: true, message: 'Please input rate Per Hour!' }]}
         >
-          <Input type="number" placeholder="Enter base fare" />
+          <Input type="number" placeholder="Enter rate Per Hour" />
         </Form.Item>
 
 
