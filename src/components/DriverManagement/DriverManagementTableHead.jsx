@@ -1,9 +1,11 @@
-import { useLocation } from "react-router-dom";
+import { Pagination } from 'antd';
+import { useLocation, useNavigate } from "react-router-dom";
 import { useGetDriverManagementQuery } from '../../features/DriverManagement/driverManagement';
 import DriverManagementTableBody from "./DriverManagementTableBody";
 
 const DriverManagementTableHead = ({ columns }) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const pageParam = parseInt(queryParams.get("page")) || 1;
   const searchTerm = queryParams.get("search") || '';
@@ -12,6 +14,13 @@ const DriverManagementTableHead = ({ columns }) => {
     page: pageParam,
     searchTerm
   });
+
+  const handlePageChange = (page) => {
+    // Update the URL with the new page parameter
+    const newQueryParams = new URLSearchParams(location.search);
+    newQueryParams.set('page', page);
+    navigate({ search: newQueryParams.toString() });
+  };
 
   if (isLoading) {
     return (
@@ -30,6 +39,7 @@ const DriverManagementTableHead = ({ columns }) => {
   }
 
   const drivers = data?.data || [];
+  const paginationMeta = data?.meta || {};
 
   return (
     <main className="overflow-x-auto">
@@ -46,7 +56,7 @@ const DriverManagementTableHead = ({ columns }) => {
         {/* Body section */}
         <div className="border-2 border-opacity-50 rounded-lg bg-surfacePrimary border-primary">
           {drivers.length > 0 ? (
-            drivers.map((driver, i) => (
+            [...drivers]?.reverse()?.map((driver, i) => (
               <DriverManagementTableBody
                 key={driver._id}
                 driver={driver}
@@ -59,6 +69,21 @@ const DriverManagementTableHead = ({ columns }) => {
             </div>
           )}
         </div>
+
+        {/* Pagination section */}
+        {paginationMeta.totalPage > 1 && (
+          <div className="flex justify-center mt-4">
+            <Pagination
+              current={paginationMeta.page}
+              total={paginationMeta.total}
+              pageSize={paginationMeta.limit}
+              onChange={handlePageChange}
+              showSizeChanger={false}
+              showQuickJumper
+              showTotal={(total, range) => `${range[0]}-${range[1]} of ${total} drivers`}
+            />
+          </div>
+        )}
       </section>
     </main>
   );

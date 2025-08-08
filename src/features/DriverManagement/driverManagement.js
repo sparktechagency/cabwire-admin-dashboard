@@ -4,7 +4,7 @@ export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getDriverManagement: builder.query({
       query: ({ page, searchTerm }) => `/user/all-drivers?page=${page}&searchTerm=${searchTerm}`,
-      providesTags: [],
+      providesTags: ["driverManagement"],
     }),
 
     updateDriverStatus: builder.mutation({
@@ -15,7 +15,7 @@ export const userApi = baseApi.injectEndpoints({
     "status": "active"
 } */
       }),
-      invalidatesTags: [],
+      invalidatesTags: ["driverManagement"],
     }),
   }),
 });
